@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -15,9 +16,13 @@ public class PriceHistoryService {
     @Autowired
     private PriceHistoryRepository priceHistoryRepository;
 
-    //가격 이력 저장
-    public PriceHistory savePriceHistory(PriceHistory priceHistory) {
-        return priceHistoryRepository.save(priceHistory);
+    //받은 상품에 대한 가격을 저장
+    public void savePriceHistory(Product product, int price) {
+        PriceHistory priceHistory = new PriceHistory();
+        priceHistory.setProduct(product);
+        priceHistory.setPrice(price);
+        priceHistory.setDate(LocalDate.now());
+        priceHistoryRepository.save(priceHistory);
     }
 
     //상품에 대한 가격 이력 리스트 반환
