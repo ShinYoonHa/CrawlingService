@@ -50,6 +50,7 @@ public class ProductService {
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
+    //특정 상품 조회
     public Optional<Product> getProduct(Long item_id) {
         return productRepository.findById(item_id);
     }
