@@ -20,79 +20,82 @@ public class CrawlingService {
     @Autowired
     private PriceHistoryService priceHistoryService;
 
-    private Elements product_list;
-
     public void crawl() throws IOException {
-
-        String url = "https://www.coupang.com/np/categories/"+Category.APPLIANCE_DIGITAL.getCategory_id(); //가전/디지털 카테고리 첫 페이지
-        System.out.println("데이터를 크롤링합니다");
-        //url과 연결하여 페이지를 크롤링. 뒤에 붙은 건 크롤링 아닌 브라우저 검색처럼 보이기 위한 부분.
-        Document doc = Jsoup.connect(url)
-                .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
-                .header("Accept-Language", "en-US,en;q=0.9")
-                .header("Accept-Encoding", "gzip, deflate")
-                .header("Connection", "keep-alive")
-                .get();
-
-        product_list = doc.select("ul#productList li");
         List<Product> products = new ArrayList<>();
+        System.out.println("데이터를 크롤링합니다");
+        //모든 카테고리 항목에 대해 크롤링 실행
+        for(Category category_value : Category.values()){
+            String url = "https://www.coupang.com/np/categories/" + category_value.getCategory_id(); //가전/디지털 카테고리 첫 페이지
+            System.out.println("크롤링할 url: " + url);
 
-        for(int i=0; i<59; i++) {
-            //상품 아이디
-            Long id = Long.parseLong(product_list.get(i).attr("id"));
-            //상품 썸네일 이미지
-            String img_src = product_list.get(i).select("a dl dt img").attr("src");
-            //상품명
-            String name = product_list.get(i).select("a dl dd div.name").text();
-            // 가격정보에 ',' 문자 제거 후 정수형 타입으로 변환
-            String price_str = product_list.get(i)
-                    .select("a dl dd div.price-area div.price-wrap div.price em.sale strong.price-value").text();
-            if(price_str.equals("")) {
-                //가격정보가 없는 상품 넘어가기 (ex. 반품)
-                continue;
+            //url과 연결하여 페이지를 크롤링. 뒤에 붙은 건 크롤링 아닌 브라우저 검색처럼 보이기 위한 부분.
+            Document doc = Jsoup.connect(url)
+                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+                    .header("Accept-Language", "en-US,en;q=0.9")
+                    .header("Accept-Encoding", "gzip, deflate")
+                    .header("Connection", "keep-alive")
+                    .get();
+
+            Elements product_list = doc.select("ul#productList li");
+
+            for (int i = 0; i < 30; i++) {
+                //상품 아이디
+                Long id = Long.parseLong(product_list.get(i).attr("id"));
+                //상품 썸네일 이미지
+                String img_src = product_list.get(i).select("a dl dt img").attr("src");
+                //상품명
+                String name = product_list.get(i).select("a dl dd div.name").text();
+                // 가격정보에 ',' 문자 제거 후 정수형 타입으로 변환
+                String price_str = product_list.get(i)
+                        .select("a dl dd div.price-area div.price-wrap div.price em.sale strong.price-value").text();
+                if (price_str.equals("")) {
+                    //가격정보가 없는 상품 넘어가기 (ex. 반품)
+                    continue;
+                }
+                int price = Integer.parseInt(price_str.replace(",", ""));
+
+                Double rate = 0.0; //평점
+                int rate_count = 0; //평점 개수
+                //평점 조회함
+                String rate_str = product_list.get(i)
+                        .select("a dl dd div.other-info div.rating-star span.star em.rating").text();
+
+                //평점이 없을 경우(null), 평점과 평점개수를 0으로 저장
+                if (!rate_str.isEmpty()) {
+                    //문자열 평점을 실수 로 변환
+                    rate = Double.parseDouble(product_list.get(i)
+                            .select("a dl dd div.other-info div.rating-star span.star em.rating").text());
+                    //평점 개수에 괄호 제거 후 정수 타입으로 변환
+                    String rate_count_str = product_list.get(i)
+                            .select("a dl dd div.other-info > div.rating-star > span.rating-total-count").text();
+                    rate_count = Integer.parseInt(rate_count_str.replace("(", "").replace(")", ""));
+                }
+
+
+                Product product = new Product();
+                product.setId(id);
+                product.setImg(img_src);
+                product.setName(name);
+                product.setPrice(price);
+                product.setRate(rate);
+                product.setRate_count(rate_count);
+                product.setCategory(Category.valueOf(category_value.name())); //카테고리의 영문명 저장
+
+                products.add(product);
+
+                System.out.println("상품 아이디: " + id);
+                System.out.println("이미지 경로: " + img_src);
+                System.out.println("상품명: " + name);
+                System.out.println("가격: " + price);
+                System.out.println("평점: " + rate);
+                System.out.println("평점 개수: " + rate_count);
+                System.out.println("카테고리: " + category_value.getCategory_value()); //확인용 카테고리의 한글명
+                System.out.println("====================================");
             }
-            int price = Integer.parseInt(price_str.replace(",",""));
-            
-            Double rate = 0.0; //평점
-            int rate_count = 0; //평점 개수
-            //평점 조회함
-            String rate_str = product_list.get(i)
-                    .select("a dl dd div.other-info div.rating-star span.star em.rating").text();
 
-            //평점이 없을 경우(null), 평점과 평점개수를 0으로 저장
-            if(!rate_str.isEmpty()) {
-                //문자열 평점을 실수 로 변환
-                rate = Double.parseDouble(product_list.get(i)
-                        .select("a dl dd div.other-info div.rating-star span.star em.rating").text());
-                //평점 개수에 괄호 제거 후 정수 타입으로 변환
-                String rate_count_str = product_list.get(i)
-                        .select("a dl dd div.other-info > div.rating-star > span.rating-total-count").text();
-                rate_count = Integer.parseInt(rate_count_str.replace("(","").replace(")",""));
-            }
-            Category category = Category.APPLIANCE_DIGITAL; //테스트 위한 카테고리
-
-
-            Product product = new Product();
-            product.setId(id);
-            product.setImg(img_src);
-            product.setName(name);
-            product.setPrice(price);
-            product.setRate(rate);
-            product.setRate_count(rate_count);
-            product.setCategory(category);
-
-            products.add(product);
-
-            System.out.println("상품 아이디: " + id);
-            System.out.println("이미지 경로: " + img_src);
-            System.out.println("상품명: " + name);
-            System.out.println("가격: " + price);
-            System.out.println("평점: " + rate);
-            System.out.println("평점 개수: " + rate_count);
-            System.out.println("카테고리: " + category.getCategory_value());
-            System.out.println("====================================");
         }
         productService.saveAllProducts(products);
+
     }
 
     public void detailCrawl(Long item_id) throws IOException {
@@ -130,6 +133,19 @@ public class CrawlingService {
         //해당 상품의 가격 이력 저장
         priceHistoryService.savePriceHistory(product, product.getPrice());
 
+    }
+    public int crawlLatestPrice(Long itemId) throws IOException {
+        String url = "https://www.coupang.com/vp/products/" + itemId; // 상품 상세 페이지
+        Document doc = Jsoup.connect(url)
+                .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+                .header("Accept-Language", "en-US,en;q=0.9")
+                .header("Accept-Encoding", "gzip, deflate")
+                .header("Connection", "keep-alive")
+                .get();
+
+        // 가격 추출
+        String detailPriceStr = doc.select("span.total-price strong").getFirst().text();
+        return Integer.parseInt(detailPriceStr.replace(",", "").replace("원", ""));
     }
 
 }
