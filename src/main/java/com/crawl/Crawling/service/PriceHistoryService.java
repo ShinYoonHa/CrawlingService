@@ -16,17 +16,13 @@ import java.util.List;
 public class PriceHistoryService {
     @Autowired
     private PriceHistoryRepository priceHistoryRepository;
-    @Autowired
-    private ProductService productService;
-    @Autowired
-    private CrawlingService crawlingService;
 
     //받은 상품에 대한 가격을 저장
-    public void savePriceHistory(Product product, int price) {
+    public void savePriceHistory(Product product) {
         PriceHistory priceHistory = new PriceHistory();
         priceHistory.setProduct(product);
-        priceHistory.setPrice(price);
-        priceHistory.setDate(LocalDate.now());
+        priceHistory.setPrice(product.getPrice());
+        priceHistory.setDate(LocalDate.now()); //현재 날짜를 저장 yyyy-MM-dd
         priceHistoryRepository.save(priceHistory);
     }
 
@@ -40,17 +36,17 @@ public class PriceHistoryService {
         return priceHistoryRepository.findAll();
     }
 
-    //모든 가격 이력 업데이트
-    public void updateAllHistories() throws IOException {
-        // 모든 상품 조회
-        List<Product> products = productService.getAllProducts();
-
-        for (Product product : products) {
-            // 상품의 상세 페이지를 크롤링하여 최신 가격을 가져오는 메서드 호출
-            int latestPrice = crawlingService.crawlLatestPrice(product.getId());
-
-            // 가격 히스토리에 저장
-            savePriceHistory(product, latestPrice);
-        }
-    }
+//    //모든 가격 이력 업데이트
+//    public void updateAllHistory() throws IOException {
+//        // 모든 상품 조회
+//        List<Product> products = productService.getAllProducts();
+//
+//        for (Product product : products) {
+//            // 상품의 상세 페이지를 크롤링하여 최신 가격을 가져오는 메서드 호출
+//            int latestPrice = crawlingService.crawlLatestPrice(product.getId());
+//
+//            // 가격 히스토리에 저장
+//            savePriceHistory(product, latestPrice);
+//        }
+//    }
 }
