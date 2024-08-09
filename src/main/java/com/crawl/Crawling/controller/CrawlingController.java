@@ -1,6 +1,6 @@
 package com.crawl.Crawling.controller;
 
-import com.crawl.Crawling.service.CrawlingService;
+import com.crawl.Crawling.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,12 +12,12 @@ import java.io.IOException;
 @Controller
 public class CrawlingController {
     @Autowired
-    CrawlingService crawlingService;
+    ProductService productService;
 
     @GetMapping(value = "")
     public String crawl() {
         try {
-            crawlingService.crawl();
+            productService.saveAllProducts();
             return "crawl";
 
         } catch(IOException e) {
@@ -26,11 +26,12 @@ public class CrawlingController {
         }
     }
 
-    @GetMapping(value = "/detailCrawl")
+    @GetMapping(value = "/update")
     public String detailCrawl() {
         try {
-            crawlingService.detailCrawl(8052075526L);
-            return "detailCrawl";
+            //db에 저장된 모든 상품의 정보 업데이트
+            productService.updateAllProduct();
+            return "update";
 
         } catch(IOException e) {
             e.printStackTrace();
