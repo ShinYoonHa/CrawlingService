@@ -25,4 +25,17 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<PriceHistory> priceHistories;
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", img='" + img + '\'' +
+                ", rate=" + rate +
+                ", rate_count=" + rate_count +
+                ", category=" + category +
+                '}'+"\n";
+    }
 }
