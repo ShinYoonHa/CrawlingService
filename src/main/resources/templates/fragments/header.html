@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<div th:fragment="header">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Value Chaser</a>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="#">카테고리</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/category/187069">여성패션</a></li>
+                        <li><a class="dropdown-item" href="/category/186764">남성패션</a></li>
+                        <li><a class="dropdown-item" href="/category/176522">뷰티</a></li>
+                        <li><a class="dropdown-item" href="/category/221934">출산/유아동</a></li>
+                        <li><a class="dropdown-item" href="/category/194276">식품</a></li>
+                        <li><a class="dropdown-item" href="/category/185669">주방용품</a></li>
+                        <li><a class="dropdown-item" href="/category/115673">생활용품</a></li>
+                        <li><a class="dropdown-item" href="/category/184555">가구/인테리어</a></li>
+                        <li><a class="dropdown-item" href="/category/178255">가전/디지털</a></li>
+                        <li><a class="dropdown-item" href="/category/317778">스포츠/레저</a></li>
+                        <li><a class="dropdown-item" href="/category/184060">자동차용품</a></li>
+                        <li><a class="dropdown-item" href="/category/317777">도서/음반</a></li>
+                        <li><a class="dropdown-item" href="/category/317779">완구/취미</a></li>
+                        <li><a class="dropdown-item" href="/category/177295">문구/오피스</a></li>
+                        <li><a class="dropdown-item" href="/category/115674">애완동물용품</a></li>
+                        <li><a class="dropdown-item" href="/category/305798">헬스/건강식품</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/contact">연락</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item" sec:authorize="isAnonymous()">
+                    <a class="nav-link" href="/user/login">로그인</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <span class="nav-link">
+                            <span th:text="${userName} + '님'"></span>
+                        </span>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link" href="/user/logout">로그아웃</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link" href="/user/mypage">마이 페이지</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+</html>
