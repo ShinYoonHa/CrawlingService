@@ -1,12 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout}">
 <head>
     <meta charset="UTF-8">
-    <title>메인페이지</title>
+    <title>Home - MyWebsite</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </head>
-<body>
-    <h1>메인페이지입니다.</h1>
-    <a href="/crawl">크롤링페이지</a>
-    <a href="/crawl/update">상품정보 업데이트 페이지</a>
-</body>
+
+<div layout:fragment="content">
+    <div class="jumbotron text-center">
+        <h1>Welcome to MyWebsite</h1>
+        <p class="lead">This is a simple web page created with Thymeleaf.</p>
+        <hr class="my-4">
+        <p>Learn more about what we do by exploring the website.</p>
+        <a class="btn btn-primary btn-lg" href="/about" role="button">Learn more</a>
+    </div>
+</div>
+
+
 </html>
