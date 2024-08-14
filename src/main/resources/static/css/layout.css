@@ -27,29 +27,56 @@
 .nav-item {
     position: relative;
 }
-
-/* 드롭다운 메뉴 숨김 */
-.dropdown-menu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    white-space: nowrap;
-    border-radius: 0; /* 각진 모서리 */
-    border: 1px solid #ccc; /* 테두리 */
+/* 드롭다운 버튼의 클릭 영역을 넓힘 */
+.btn-group.dropend {
+    position: relative;
+    width: 100%;
 }
 
-/* 마우스를 올렸을 때 드롭다운 메뉴 보이기 */
-.nav-item:hover .dropdown-menu {
+.btn-group.dropend .btn.dropdown-item {
     display: block;
 }
 
-/* 드롭다운 메뉴의 항목 스타일 */
-.dropdown-item {
-    padding: 10px 20px;
+/* 드롭다운 서브메뉴의 위치 조정 */
+.dropdown-menu.dropdown-submenu {
+    display: none;
+    position: absolute;
+    left: 100%; /* 버튼의 오른쪽에 위치하도록 설정 */
+    top: 0;     /* 버튼의 위쪽에 맞춰 위치 조정 */
+    margin-left: 0; /* 버튼과 서브메뉴 사이의 여백 없음 */
 }
 
-/* 드롭다운 메뉴의 배경색 및 스타일 */
-.dropdown-item:hover {
-    background-color: #f8f9fa;
+/* 서브메뉴가 보이도록 설정 */
+.dropend:hover .dropdown-menu.dropdown-submenu {
+    display: block;
+}
+
+/* 서브메뉴 항목 클릭 영역 확대 */
+.dropdown-menu.dropdown-submenu .dropdown-item {
+    padding: 5px 5px; /* 패딩을 추가하여 클릭 영역 확대 */
+    white-space: nowrap; /* 텍스트가 줄 바꿈 없이 한 줄 */
+    font-size: 15px;
+}
+
+
+/* 드롭다운 메뉴의 항목 스타일 */
+.dropdown-item {
+    padding: 5px; /* 클릭 영역을 넓히기 위해 패딩을 조정 */
+    font-size: 15px;
+}
+
+.dropdown-list {
+    display: none;
+}
+
+/* 드롭다운 메뉴 보이기 */
+.nav-item:hover .dropdown-list {
+    display: block;
+}
+
+/* 서브메뉴 보이기 */
+.dropend:hover .dropdown-submenu {
+    display: block;
+    left: 100%; /* 버튼의 오른쪽에 위치하도록 설정 */
+    top: -10px;     /* 버튼의 위쪽에 맞춰 위치 조정 */
 }
