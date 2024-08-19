@@ -14,6 +14,8 @@ public class ProductDto {
     private int price;          // 가격
     private String img;         // 상품 이미지 경로
     private Double rate;        // 평점
+    private int rateCount;      // 평점 개수
+    private Category category;  // 카테고리
 
     @Override
     public String toString() {
@@ -27,9 +29,6 @@ public class ProductDto {
                 ", category=" + category +
                 '}';
     }
-
-    private int rateCount;      // 평점 개수
-    private Category category;  // 카테고리
 
     public static ModelMapper modelMapper = new ModelMapper();
     
