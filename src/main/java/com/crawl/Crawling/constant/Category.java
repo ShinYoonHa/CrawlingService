@@ -1,8 +1,8 @@
 package com.crawl.Crawling.constant;
 
 public enum Category {
-    WOMAN_FASHION(187069L, "여성패션"),
-    MAN_FASHION(186764L, "남성패션"),
+    WOMAN_FASHION(186764L, "여성패션"),
+    MAN_FASHION(187069L, "남성패션"),
     BEAUTY(176522L, "뷰티"),
     BABY_KIDS(221934L, "출산/유아동"),
     FOOD(194276L, "식품"),
