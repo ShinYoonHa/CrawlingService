@@ -1,13 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<th:block layout:fragment="script">
-    <script th:inline="javascript">
-
-    </script>
-</th:block>
 
 <div th:fragment="header">
-    <nav class="navbar  navbar-dark fixed-top">
+    <nav class="navbar navbar-dark fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">Value Chaser</a>
             <ul class="navbar-nav me-auto" style="flex-direction: row">
@@ -15,109 +10,57 @@
                     <button class="btn dropdown-toggle nav-link category" aria-expanded="false">
                         카테고리
                     </button>
-                    <ul class="dropdown-menu dropdown-list">
-                        <li class="btn-group dropend ">
-                            <button type="button" class="btn dropdown-item dropdown-toggle" data-bs-toggle="dropdown"
-                            aria-expanded="false" onClick="location.href='/category/187069'">여성패션</button>
-                            <ul class="dropdown-menu dropdown-submenu">
-                                <li><a class="dropdown-item" href="#">의류</a></li>
-                                <li><a class="dropdown-item" href="#">신발</a></li>
-                                <li><a class="dropdown-item" href="#">가방/잡화</a></li>
-                            </ul>
+                    <ul class="dropdown-menu">
+                        <li class="btn-group">
+                            <button type="button" class="btn" onClick="location.href='/category/187069'">여성패션</button>
                         </li>
-                        <li class="btn-group dropend"><button type="button" class="btn dropdown-item dropdown-toggle" data-bs-toggle="dropdown"
-                                                              aria-expanded="false" onClick="location.href='/category/186764'">남성패션</button>
-                            <ul class="dropdown-menu dropdown-submenu">
-                                <li><a class="dropdown-item" href="#">의류</a></li>
-                                <li><a class="dropdown-item" href="#">신발</a></li>
-                                <li><a class="dropdown-item" href="#">가방/잡화</a></li>
-                            </ul></li>
-                        <li class="btn-group dropend"><button type="button" class="btn dropdown-item dropdown-toggle" data-bs-toggle="dropdown"
-                                                              aria-expanded="false" onClick="location.href='/category/176522'">뷰티</button>
-                            <ul class="dropdown-menu dropdown-submenu">
-                                <li><a class="dropdown-item" href="#">의류</a></li>
-                                <li><a class="dropdown-item" href="#">신발</a></li>
-                                <li><a class="dropdown-item" href="#">가방/잡화</a></li>
-                            </ul></li>
-                        <li class="btn-group dropend"><button type="button" class="btn dropdown-item dropdown-toggle" data-bs-toggle="dropdown"
-                                                              aria-expanded="false" onClick="location.href='/category/221934'">출산/유아동</button>
-                            <ul class="dropdown-menu dropdown-submenu">
-                                <li><a class="dropdown-item" href="#">의류</a></li>
-                                <li><a class="dropdown-item" href="#">신발</a></li>
-                                <li><a class="dropdown-item" href="#">가방/잡화</a></li>
-                            </ul></li>
-                        <li class="btn-group dropend"><button type="button" class="btn dropdown-item dropdown-toggle" data-bs-toggle="dropdown"
-                                                              aria-expanded="false" onClick="location.href='/category/194276'">식품</button><ul class="dropdown-menu dropdown-submenu">
-                            <li><a class="dropdown-item" href="#">의류</a></li>
-                            <li><a class="dropdown-item" href="#">신발</a></li>
-                            <li><a class="dropdown-item" href="#">가방/잡화</a></li>
-                        </ul></li>
-                        <li class="btn-group dropend"><button type="button" class="btn dropdown-item dropdown-toggle" data-bs-toggle="dropdown"
-                                                              aria-expanded="false" onClick="location.href='/category/185669'">주방용품</button><ul class="dropdown-menu dropdown-submenu">
-                            <li><a class="dropdown-item" href="#">의류</a></li>
-                            <li><a class="dropdown-item" href="#">신발</a></li>
-                            <li><a class="dropdown-item" href="#">가방/잡화</a></li>
-                        </ul></li>
-                        <li class="btn-group dropend"><button type="button" class="btn dropdown-item dropdown-toggle" data-bs-toggle="dropdown"
-                                                              aria-expanded="false" onClick="location.href='/category/115673'">생활용품</button><ul class="dropdown-menu dropdown-submenu">
-                            <li><a class="dropdown-item" href="#">의류</a></li>
-                            <li><a class="dropdown-item" href="#">신발</a></li>
-                            <li><a class="dropdown-item" href="#">가방/잡화</a></li>
-                        </ul></li>
-                        <li class="btn-group dropend"><button type="button" class="btn dropdown-item dropdown-toggle" data-bs-toggle="dropdown"
-                                                              aria-expanded="false" onClick="location.href='/category/184555'">가구/인테리어</button><ul class="dropdown-menu dropdown-submenu">
-                            <li><a class="dropdown-item" href="#">의류</a></li>
-                            <li><a class="dropdown-item" href="#">신발</a></li>
-                            <li><a class="dropdown-item" href="#">가방/잡화</a></li>
-                        </ul></li>
-                        <li class="btn-group dropend"><button type="button" class="btn dropdown-item dropdown-toggle" data-bs-toggle="dropdown"
-                                                              aria-expanded="false" onClick="location.href='/category/178255'">가전/디지털</button><ul class="dropdown-menu dropdown-submenu">
-                            <li><a class="dropdown-item" href="#">의류</a></li>
-                            <li><a class="dropdown-item" href="#">신발</a></li>
-                            <li><a class="dropdown-item" href="#">가방/잡화</a></li>
-                        </ul></li>
-                        <li class="btn-group dropend"><button type="button" class="btn dropdown-item dropdown-toggle" data-bs-toggle="dropdown"
-                                                              aria-expanded="false" onClick="location.href='/category/317778'">스포츠/레저</button><ul class="dropdown-menu dropdown-submenu">
-                            <li><a class="dropdown-item" href="#">의류</a></li>
-                            <li><a class="dropdown-item" href="#">신발</a></li>
-                            <li><a class="dropdown-item" href="#">가방/잡화</a></li>
-                        </ul></li>
-                        <li class="btn-group dropend"><button type="button" class="btn dropdown-item dropdown-toggle" data-bs-toggle="dropdown"
-                                                              aria-expanded="false" onClick="location.href='/category/184060'">자동차용품</button><ul class="dropdown-menu dropdown-submenu">
-                            <li><a class="dropdown-item" href="#">의류</a></li>
-                            <li><a class="dropdown-item" href="#">신발</a></li>
-                            <li><a class="dropdown-item" href="#">가방/잡화</a></li>
-                        </ul></li>
-                        <li class="btn-group dropend"><button type="button" class="btn dropdown-item dropdown-toggle" data-bs-toggle="dropdown"
-                                                              aria-expanded="false" onClick="location.href='/category/317777'">도서/음반</button><ul class="dropdown-menu dropdown-submenu">
-                            <li><a class="dropdown-item" href="#">의류</a></li>
-                            <li><a class="dropdown-item" href="#">신발</a></li>
-                            <li><a class="dropdown-item" href="#">가방/잡화</a></li>
-                        </ul></li>
-                        <li class="btn-group dropend"><button type="button" class="btn dropdown-item dropdown-toggle" data-bs-toggle="dropdown"
-                                                              aria-expanded="false" onClick="location.href='/category/317779'">완구/취미</button><ul class="dropdown-menu dropdown-submenu">
-                            <li><a class="dropdown-item" href="#">의류</a></li>
-                            <li><a class="dropdown-item" href="#">신발</a></li>
-                            <li><a class="dropdown-item" href="#">가방/잡화</a></li>
-                        </ul></li>
-                        <li class="btn-group dropend"><button type="button" class="btn dropdown-item dropdown-toggle" data-bs-toggle="dropdown"
-                                                              aria-expanded="false" onClick="location.href='/category/177295'">문구/오피스</button><ul class="dropdown-menu dropdown-submenu">
-                            <li><a class="dropdown-item" href="#">의류</a></li>
-                            <li><a class="dropdown-item" href="#">신발</a></li>
-                            <li><a class="dropdown-item" href="#">가방/잡화</a></li>
-                        </ul></li>
-                        <li class="btn-group dropend"><button type="button" class="btn dropdown-item dropdown-toggle" data-bs-toggle="dropdown"
-                                                              aria-expanded="false" onClick="location.href='/category/115674'">애완동물용품</button><ul class="dropdown-menu dropdown-submenu">
-                            <li><a class="dropdown-item" href="#">의류</a></li>
-                            <li><a class="dropdown-item" href="#">신발</a></li>
-                            <li><a class="dropdown-item" href="#">가방/잡화</a></li>
-                        </ul></li>
-                        <li class="btn-group dropend"><button type="button" class="btn dropdown-item dropdown-toggle" data-bs-toggle="dropdown"
-                                                              aria-expanded="false" onClick="location.href='/category/305798'">헬스/건강식품</button><ul class="dropdown-menu dropdown-submenu">
-                            <li><a class="dropdown-item" href="#">의류</a></li>
-                            <li><a class="dropdown-item" href="#">신발</a></li>
-                            <li><a class="dropdown-item" href="#">가방/잡화</a></li>
-                        </ul></li>
+                        <li class="btn-group">
+                            <button type="button" class="btn" onClick="location.href='/category/186764'">남성패션</button>
+                        </li>
+                        <li class="btn-group">
+                            <button type="button" class="btn" onClick="location.href='/category/176522'">뷰티</button>
+                        </li>
+                        <li class="btn-group">
+                            <button type="button" class="btn" onClick="location.href='/category/221934'">출산/유아동</button>
+                        </li>
+                        <li class="btn-group">
+                            <button type="button" class="btn" onClick="location.href='/category/194276'">식품</button>
+                        </li>
+                        <li class="btn-group">
+                            <button type="button" class="btn" onClick="location.href='/category/185669'">주방용품</button>
+                        </li>
+                        <li class="btn-group">
+                            <button type="button" class="btn" onClick="location.href='/category/115673'">생활용품</button>
+                        </li>
+                        <li class="btn-group">
+                            <button type="button" class="btn" onClick="location.href='/category/184555'">가구/인테리어
+                            </button>
+                        </li>
+                        <li class="btn-group">
+                            <button type="button" class="btn" onClick="location.href='/category/178255'">가전/디지털</button>
+                        </li>
+                        <li class="btn-group">
+                            <button type="button" class="btn" onClick="location.href='/category/317778'">스포츠/레저</button>
+                        </li>
+                        <li class="btn-group">
+                            <button type="button" class="btn" onClick="location.href='/category/184060'">자동차용품</button>
+                        </li>
+                        <li class="btn-group">
+                            <button type="button" class="btn" onClick="location.href='/category/317777'">도서/음반</button>
+                        </li>
+                        <li class="btn-group">
+                            <button type="button" class="btn" onClick="location.href='/category/317779'">완구/취미</button>
+                        </li>
+                        <li class="btn-group">
+                            <button type="button" class="btn" onClick="location.href='/category/177295'">문구/오피스</button>
+                        </li>
+                        <li class="btn-group">
+                            <button type="button" class="btn" onClick="location.href='/category/115674'">애완동물용품</button>
+                        </li>
+                        <li class="btn-group">
+                            <button type="button" class="btn" onClick="location.href='/category/305798'">헬스/건강식품
+                            </button>
+                        </li>
                     </ul>
                 </li>
                 <li class="nav-item">

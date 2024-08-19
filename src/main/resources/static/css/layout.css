@@ -1,13 +1,4 @@
-* {
-  padding: 0;
-  margin: 0;
-}
-
 .footer {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
   width: 100%;
   padding: 15px 0;
   text-align: center;
@@ -32,36 +23,13 @@
     padding-left: 10px;
 }
 /* 드롭다운 버튼의 클릭 영역을 넓힘 */
-.btn-group.dropend {
+.btn-group {
     position: relative;
     width: 100%;
 }
-
-.btn-group.dropend .btn.dropdown-item {
-    display: block;
+.btn-group:hover {
+    background-color:#b59bf2;
 }
-
-/* 드롭다운 서브메뉴의 위치 조정 */
-.dropdown-menu.dropdown-submenu {
-    display: none;
-    position: absolute;
-    left: 100%; /* 버튼의 오른쪽에 위치하도록 설정 */
-    top: 0;     /* 버튼의 위쪽에 맞춰 위치 조정 */
-    margin-left: 0; /* 버튼과 서브메뉴 사이의 여백 없음 */
-}
-
-/* 서브메뉴가 보이도록 설정 */
-.dropend:hover .dropdown-menu.dropdown-submenu {
-    display: block;
-}
-
-/* 서브메뉴 항목 클릭 영역 확대 */
-.dropdown-menu.dropdown-submenu .dropdown-item {
-    padding: 5px 5px; /* 패딩을 추가하여 클릭 영역 확대 */
-    white-space: nowrap; /* 텍스트가 줄 바꿈 없이 한 줄 */
-    font-size: 15px;
-}
-
 
 /* 드롭다운 메뉴의 항목 스타일 */
 .dropdown-item {
@@ -69,26 +37,19 @@
     font-size: 15px;
 }
 
-.dropdown-list {
+.dropdown-menu {
     display: none;
     height: 0;
-    max-width: 120px; /* 최대 너비를 300px로 설정 */
+    max-width: 110px; /* 최대 너비를 300px로 설정 */
 }
 
 /* 드롭다운 메뉴 보이기 */
-.nav-item:hover .dropdown-list {
+.nav-item:hover .dropdown-menu {
     position: absolute;
     display: block;
     height: auto;
 }
 
-/* 서브메뉴 보이기 */
-.dropend:hover .dropdown-submenu {
-    display: block;
-    left: 100%; /* 버튼의 오른쪽에 위치하도록 설정 */
-    top: -10px;     /* 버튼의 위쪽에 맞춰 위치 조정 */
-    width: 150px;
-}
 .category {
     pointer-events : none;
 }
