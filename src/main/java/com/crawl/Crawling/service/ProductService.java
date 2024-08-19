@@ -1,9 +1,12 @@
 package com.crawl.Crawling.service;
 
 import com.crawl.Crawling.dto.ProductDto;
+import com.crawl.Crawling.dto.ProductSearchDto;
 import com.crawl.Crawling.entity.Product;
 import com.crawl.Crawling.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,5 +87,10 @@ public class ProductService {
             //가격 이력 갱신
             priceHistoryService.savePriceHistory(findProduct);
         }
+    }
+
+    @Transactional(readOnly = true) //조회용 쿼리임을 명시
+    public Page<Product> getCategoryPage(ProductSearchDto productSearchDto, Pageable pageable) {
+        return productRepository.getCategoryPage(productSearchDto, pageable);
     }
 }
