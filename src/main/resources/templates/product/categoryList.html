@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>카테고리 목록 - ShowMate</title>
+    <link rel="stylesheet" th:href="@{/css/categoryList.css}" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<div layout:fragment="content">
+    <input type="hidden" name="searchQuery" th:value="${productSearchDto.searchQuery}">
+    <div class="searchResult" th:if="${not #strings.isEmpty(productSearchDto.searchQuery)}" >
+        <p class="h4 font-weight-bold" th:text="'\'' + ${productSearchDto.searchQuery} + '\'' + ' 검색결과'"></p>
+    </div>
+    <p class="totalCount text-danger" th:text="'총 검색 건수: ' + ${products.totalElements}"></p>
+    <hr>
+
+    <form th:action="@{/category=${products.category}/page=${products.number}}" role="form" method="get" th:object="${products}">
+        <div class="search-container mb-3" th:object="${productSearchDto}">
+            <select th:field="*{searchCategory}" class="form-control" style="width: auto">
+                <option value="">카테고리</option>
+                <option th:each="category : ${categoryList}" th:value="${category.name()}" th:text="${category.getCategory_value()}"></option>
+            </select>
+
+            <input th:field="*{searchQuery}" type="text" class="form-control" style="width: auto; margin-left: 15px" placeholder="검색어를 입력하세요" />
+            <button id="searchBtn" type="submit" class="form-control btn btn-primary" style="width: auto">검색</button>
+        </div>
+        <div class="custom-container text-center">
+            <div class="card-container"> <!-- Flexbox와 컬럼 수 조정 -->
+                <th:block th:each="product, status: ${products.getContent()}">
+                    <div class="custom-card card"> <!-- .custom-card와 .card 클래스를 함께 사용 -->
+                        <a href="#" class="text-dark">
+                            <img th:src="${product.img}" class="card-img-top" th:alt="${product.name}" height="250">
+                            <div class="card-body p-3">
+                                <h6 class="card-title"><strong>[[${product.name}]]</strong></h6>
+                                <p class="custom-text">가격 : [[${product.price}]]</p>
+                                <p class="custom-text">평점 : [[${product.rate}]]</p>
+                                <p class="custom-text">평점 개수 : [[${product.rate_count}]]</p>
+                            </div>
+                        </a>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+
+        <div th:with="start=${(products.number/maxPage) * maxPage + 1},
+            end=(${(products.totalPages == 0) ? 1 : (start + (maxPage-1) < products.totalPages ?
+                start + (maxPage-1) : products.totalPages)})">
+            <ul class="pagination justify-content-center">
+                <!--                items.first : 첫번째 페이지를 가리키는가? 가리키면 비활성화(disabled), 아니면 활성화-->
+                <li class="page-item" th:classappend="${products.first} ? 'disabled'">
+                    <a th:onclick="'javascript:page('+${products.number - 1} + ')'" aria-label="Previous" class="page-link">
+                        <span aria-hidden="true">Previous</span>
+                    </a>
+                </li>
+                <!--                페이지 번호는 0 부터 시작-->
+                <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${products.number eq page-1} ? 'active' : ''">
+                    <a th:onclick="'javascript:page('+${page-1} +')'" th:inline="text" class="page-link">[[${page}]]</a>
+                </li>
+                <li class="page-item" th:classappend="${products.last} ? 'disabled'">
+                    <a th:onclick="'javascript:page(' + ${products.number + 1} +')'" aria-label="Next" class="page-link">
+                        <span aria-hidden="true">Next</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </form>
+</div>
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            $("#searchBtn").on("click", function (e) {
+                e.preventDefault(); //검색 시 form 태그 전송 막음.
+                page(0);
+            });
+            // 공연명 잘라서 표시하는 함수 호출
+            $(".card-title strong").each(function() {
+                var text = $(this).text();
+                if (text.length > 33) { // 표시할 최대 길이 설정
+                    $(this).text(text.substring(0, 33) + "⋯");
+                }
+            });
+        });
+
+        function page(page) {
+            var searchCategory = $("#searchCategory").val();
+            var searchQuery = $("#searchQuery").val();
+
+            location.href = "/category=" + searchCategory+ "/page=" + page + "?searchCategory=" + searchCategory +
+            "&searchQuery=" + searchQuery;
+        }
+    </script>
+</th:block>
+</html>
