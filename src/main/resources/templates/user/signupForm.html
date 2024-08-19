@@ -4,6 +4,9 @@
 
 <head>
     <meta charset="UTF-8">
+    <!--    토큰을 meta 태그에서 미리 받아놓음-->
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <title>회원가입 - ShowMate</title>
     <link rel="stylesheet" th:href="@{/css/signupForm.css}" />
     <link rel="stylesheet" th:href="@{https://cdn-uicons.flaticon.com/2.5.1/uicons-bold-rounded/css/uicons-bold-rounded.css}">
@@ -14,35 +17,35 @@
         <form action="/user/signup" role="form" method="post" class="signup-form">
             <!-- 사용자 이름 -->
             <div class="input-container">
-                <input type="text" id="username" name="username" placeholder=" " required>
-                <label for="username">사용자 이름</label>
-                <span class="clear-text" onclick="clearInput('username')">
+                <input type="text" id="name" name="name" placeholder=" " required>
+                <label for="name">사용자 이름</label>
+                <span class="clear-text" onclick="clearInput('name')">
                     <i class="fi fi-br-cross"></i>
                 </span>
             </div>
 
             <!-- 이메일 -->
-            <div class="input-container input-with-button">
+            <div class="input-container code-button">
                 <input type="email" id="email" name="email" placeholder=" " required>
                 <label for="email">이메일</label>
-                <button type="button" onclick="sendVerificationCode()">인증코드 발송</button>
+                <button class="btn" type="button" onclick="sendVerificationCode()">인증코드 발송</button>
                 <span class="clear-text email-clear-text" onclick="clearInput('email')">
                     <i class="fi fi-br-cross"></i>
                 </span>
             </div>
 
             <!-- 이메일 확인 -->
-            <div class="input-container input-with-button">
+            <div class="input-container code-button">
                 <input type="text" id="email-verification" name="email-verification" placeholder=" " required>
-                <label for="email-verification">이메일 확인</label>
-                <button type="button" onclick="verifyCode()">인증코드 확인</button>
+                <label for="email-verification">인증코드 확인</label>
+                <button class="btn" type="button" onclick="verifyCode()">인증코드 확인</button>
                 <span class="clear-text email-clear-text" onclick="clearInput('email-verification')">
                     <i class="fi fi-br-cross"></i>
                 </span>
             </div>
 
             <!-- 비밀번호 -->
-            <div class="input-container">
+            <div class="input-container input-password">
                 <input type="password" id="password" name="password" placeholder=" " required>
                 <label for="password">비밀번호</label>
                 <span class="password-toggle" onclick="togglePassword('password')">
@@ -54,7 +57,7 @@
             </div>
 
             <!-- 비밀번호 확인 -->
-            <div class="input-container">
+            <div class="input-container input-password">
                 <input type="password" id="confirm-password" name="confirm-password" placeholder=" " required>
                 <label for="confirm-password">비밀번호 확인</label>
                 <span class="password-toggle" onclick="togglePassword('confirm-password')">
@@ -63,7 +66,17 @@
                 <span class="clear-text" onclick="clearInput('confirm-password')">
                     <i class="fi fi-br-cross"></i>
                 </span>
-                <div id="password-error" class="error-message">비밀번호와 일치하지 않습니다.</div>
+            </div>
+            <div id="password-error" class="error-message">비밀번호와 일치하지 않습니다.</div>
+
+            <!-- 휴대폰 번호 -->
+            <div class="input-container">
+                <input type="tel" id="tel" name="tel" placeholder=" " pattern="[0-9]{3}[0-9]{4}[0-9]{4}" required>
+                <label for="tel">휴대폰 번호 ( '-' 제외)</label>
+                <span class="clear-text" onclick="clearInput('tel')">
+                    <i class="fi fi-br-cross"></i>
+                </span>
+
             </div>
 
             <!-- 성별 -->
@@ -77,7 +90,8 @@
                 </div>
             </div>
 
-            <button class="btn btn-signup w-100" type="submit">회원가입</button>
+            <button class="btn w-100" type="submit">회원가입</button>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         </form>
 
         <div class="additional-links mt-3">
@@ -88,21 +102,33 @@
 
 <th:block layout:fragment="script">
     <script>
-        // 비밀번호 표시/숨기기 기능
+        //입력 값 유무에 따라 비밀번호 토글버튼 표시/숨기기
+        document.querySelectorAll('.input-password input').forEach(input => {
+            input.addEventListener('input', function() {
+                const pwToggle = this.parentElement.querySelector('.password-toggle');
+                if (this.value) {
+                    pwToggle.style.display = "inline";
+                    pwToggle.style.marginRight = "10px";
+                } else {
+                    pwToggle.style.display = "none";
+                }
+            });
+        });
+        // 비밀번호 표시/숨기기 메소드
         function togglePassword(fieldId) {
             const passwordInput = document.getElementById(fieldId);
-            const passwordToggle = passwordInput.parentElement.querySelector('.password-toggle');
+            const pwToggle = passwordInput.parentElement.querySelector('.password-toggle');
 
             if (passwordInput.type === "password") {
                 passwordInput.type = "text";
-                passwordToggle.innerHTML = `<i class="fi fi-br-eye"></i>`;
+                pwToggle.innerHTML = `<i class="fi fi-br-eye"></i>`;
             } else {
                 passwordInput.type = "password";
-                passwordToggle.innerHTML = `<i class="fi fi-br-eye-crossed"></i>`;
+                pwToggle.innerHTML = `<i class="fi fi-br-eye-crossed"></i>`;
             }
         }
 
-        // 입력 필드 값에 따라 X 버튼 표시/숨기기
+        // 입력 값 유무에 따라 X 버튼 표시/숨기기
         document.querySelectorAll('.input-container input').forEach(input => {
             input.addEventListener('input', function() {
                 const clearText = this.parentElement.querySelector('.clear-text');
@@ -140,6 +166,8 @@
 
             if (password !== confirmPassword) {
                 errorElement.style.display = 'block';
+                errorElement.style.marginTop = '-20px';
+                errorElement.style.marginBottom = '10px';
             } else {
                 errorElement.style.display = 'none';
             }

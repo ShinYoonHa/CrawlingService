@@ -30,7 +30,7 @@ body {
 
 .input-container input {
     width: 100%;
-    padding: 1rem;
+    padding: 0.5rem 1rem;
     font-size: 1rem;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -45,10 +45,11 @@ body {
 .input-container label {
     position: absolute;
     left: 1rem;
-    top: 1rem;
+    top: 0.7rem;
     transition: all 0.3s ease;
     color: #999;
     pointer-events: none;
+    font-size: 0.8rem;
 }
 
 .input-container input:focus + label,
@@ -86,12 +87,11 @@ body {
     padding-top: 3px;
 }
 
-/* 회원가입 버튼 스타일 */
-.btn-signup {
-    padding: 0.75rem;
-    margin-bottom: 1rem;
+/* 회원가입 버튼 내 모든 버튼 스타일 */
+.signup-form .btn {
+    padding: 0.5rem;
     border-radius: 5px;
-    font-size: 1rem;
+    font-size: 0.9rem;
     transition: background-color 0.3s, transform 0.3s;
     color: white;
     box-sizing: border-box;
@@ -99,10 +99,23 @@ body {
     border-color: #7048cd;
 }
 
-.btn-signup:hover {
+.signup-form .btn:hover {
     background-color: #6c3dbb;
     border-color: #6c3dbb;
+    color: white;
     transform: translateY(-2px);
+}
+
+/* 이메일 인증 관련 버튼 */
+.code-button {
+    display: flex;
+    align-items: center;
+}
+
+.code-button button {
+    margin-left: 5px;
+    font-size: 0.4rem;
+    width: 200px;
 }
 
 /* 추가 링크 스타일 */
@@ -129,26 +142,10 @@ body {
     display: none;
 }
 
-.input-with-button {
-    display: flex;
-    align-items: center;
-}
-
-.input-with-button input {
-    flex: 1;
-}
-
-.input-with-button button {
-    height: 100%;
-    margin-left: 5px;
-    padding: 5px 10px;
-}
-
 /* 텍스트 지우기 버튼 위치 조정 */
 .email-clear-text {
-    right: 35%; /* 우측 버튼과 겹치지 않도록 위치 조정 */
+    right: 37%; /* 우측 버튼과 겹치지 않도록 위치 조정 */
     top: 50%;
-    transform: translateY(-50%);
 }
 /* 성별 선택 부분에만 적용되는 스타일 */
 .gender-container {
