@@ -1,0 +1,86 @@
+/* 전체 페이지 배경 */
+body {
+    background: linear-gradient(120deg, #9b7cff 0%, #c1a4ff 50%, #e0d0ff 100%);
+    min-height: 100vh;
+    margin: 0;
+}
+
+.findEmail-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    box-sizing: border-box;
+    margin-top: 80px;
+}
+
+/* Input 관련 스타일 */
+.input-container {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.input-container input {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.input-container input:focus {
+    outline: none;
+    border-color: #a653e6;
+}
+
+.input-container label {
+    position: absolute;
+    left: 1rem;
+    top: 0.7rem;
+    transition: all 0.3s ease;
+    color: #999;
+    pointer-events: none;
+    font-size: 0.8rem;
+}
+
+.input-container input:focus + label,
+.input-container input:not(:placeholder-shown) + label {
+    top: -0.5rem;
+    left: 0.75rem;
+    font-size: 0.8rem;
+    color: #a653e6;
+    background: white;
+    padding: 0 0.25rem;
+}
+.findEmail-form {
+    margin: 0 auto;
+    width: 80%;
+}
+
+/* 버튼 스타일 */
+.btn-find {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: background-color 0.3s, transform 0.3s;
+    color: white;
+    box-sizing: border-box;
+    background-color: #7048cd;
+    border-color: #7048cd;
+}
+
+.btn-find:hover {
+    background-color: #6c3dbb;
+    border-color: #6c3dbb;
+    transform: translateY(-2px);
+    color: white;
+}
+
+.findEmail-title, .result-message {
+    text-align: center;
+    margin: 20px 0;
+}
