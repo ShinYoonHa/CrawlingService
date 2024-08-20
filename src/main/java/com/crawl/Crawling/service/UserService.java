@@ -19,6 +19,9 @@ public class UserService implements UserDetailsService {
         checkDuplicateUser(user); //@Transactional 이기에 예외시 작동 안함
         return userRepository.save(user); //db에 저장
     }
+    public User findByNameAndTel(String name, String tel) {
+        return userRepository.findByNameAndTel(name, tel);
+    }
     //중복된 User 있는지 확인하는 메소드
     private void checkDuplicateUser(User user) {
         User findUser = userRepository.findByEmail(user.getEmail());

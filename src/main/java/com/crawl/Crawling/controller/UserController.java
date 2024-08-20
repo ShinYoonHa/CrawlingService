@@ -5,13 +5,16 @@ import com.crawl.Crawling.entity.User;
 import com.crawl.Crawling.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -32,8 +35,6 @@ public class UserController {
     public String signup(@Valid UserDto userDto, BindingResult bindingResult, Model model) {
         //MemberFormDto 변수에 설정해놓은 조건 검사, BindingResult에 결과 저장
         if(bindingResult.hasErrors()) { //다시 회원가입 화면으로
-            System.out.println("에러발생 1");
-            System.out.println(bindingResult);
             return "user/signupForm";
         }
 //        if(!confirmCheck) { //이메일 인증 되지 않았을 경우
@@ -46,18 +47,40 @@ public class UserController {
             userService.saveUser(user); //db에 저장
         } catch(IllegalStateException e) {
             model.addAttribute("errorMessage", e.getMessage());
-            System.out.println("에러발생 2");
             return "user/signupForm";
         }
         return "redirect:/";
     }
     @GetMapping(value = "/login")
-    public String loginMember() {
+    public String login() {
         return "user/loginForm";
     }
     @GetMapping(value = "/login/error")
     public String loginError(Model model) {
         model.addAttribute("loginErrorMsg", "아이디 또는 비밀번호를 확인해주세요.");
         return "user/loginForm";
+    }
+
+    @GetMapping(value = "/find-email")
+    public String findEmail() {
+        return "user/findEmail";
+    }
+
+    @PostMapping(value = "/find-email")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> findEmail(@RequestBody Map<String, String> req) {
+        String name = req.get("name");
+        String tel = req.get("tel");
+
+        User user = userService.findByNameAndTel(name, tel);
+
+        Map<String, String> res = new HashMap<>();
+        if (user != null) {
+            res.put("message", "가입된 이메일: " + user.getEmail());
+            return ResponseEntity.ok(res); // 200 OK
+        } else {
+            res.put("message", "해당 정보로 가입된 사용자를 찾을 수 없습니다");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res); // 404 Not Found
+        }
     }
 }
