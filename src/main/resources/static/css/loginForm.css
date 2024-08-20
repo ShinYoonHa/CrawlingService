@@ -30,7 +30,7 @@ body {
 
 .input-container input {
     width: 100%;
-    padding: 1rem;
+    padding: 0.5rem 1rem;
     font-size: 1rem;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -45,10 +45,11 @@ body {
 .input-container label {
     position: absolute;
     left: 1rem;
-    top: 1rem;
+    top: 0.7rem;
     transition: all 0.3s ease;
     color: #999;
     pointer-events: none;
+    font-size: 0.8rem;
 }
 
 .input-container input:focus + label,
@@ -85,11 +86,11 @@ body {
     border-color: #7048cd;
 }
 
-
 .btn-login:hover {
     background-color: #6c3dbb;
     border-color: #6c3dbb;
     transform: translateY(-2px);
+    color: white;
 }
 
 .password-toggle {
@@ -174,3 +175,8 @@ body {
     padding: 0 10px; /* 구분 기호와 링크 사이의 여백 */
 }
 
+.error {
+    color: red;
+    text-align: center;
+    margin-top: -10px;
+}
