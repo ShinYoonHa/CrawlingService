@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>상품 상세정보 - ShowMate</title>
+    <link rel="stylesheet" th:href="@{/css/productDetail.css}" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0"></script>
+</head>
+
+<div layout:fragment="content">
+    <div class="product-detail-container">
+        <h1 th:text="${productDto.name}">Product Name</h1>
+        <div class="product-detail-info">
+            <!-- 상품 이미지 -->
+            <img th:src="@{${productDto.img}}" alt="Product Image" class="product-image" />
+
+            <!-- 상품 정보 -->
+            <div class="product-info">
+                <p><strong>Price:</strong> <span th:text="${productDto.price}">0</span> 원</p>
+                <p><strong>Category:</strong> <span th:text="${productDto.category}">Category</span></p>
+                <p><strong>Rating:</strong> <span th:text="${productDto.rate}">0.0</span> / 5.0</p>
+                <p><strong>Rating Count:</strong> <span th:text="${productDto.rateCount}">0</span></p>
+            </div>
+        </div>
+
+        <!-- 가격 변동 그래프 -->
+        <h2>Price History</h2>
+        <canvas id="priceChart"></canvas>
+    </div>
+</div>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        const priceHistories = /*[[${productDto.priceHistoryDto}]]*/ [];
+
+        const dates = priceHistories.map(history => history.date);
+        const prices = priceHistories.map(history => history.price);
+
+        const ctx = document.getElementById('priceChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [{
+                    label: 'Price',
+                    data: prices,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day',
+                            tooltipFormat: 'YYYY-MM-DD',
+                            displayFormats: {
+                                day: 'YYYY-MM-DD'
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</th:block>
+</html>

@@ -1,0 +1,37 @@
+/* productDetail.css */
+.product-detail-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.product-detail-info {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.product-image {
+    width: 250px;
+    height: auto;
+    margin-right: 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.product-info {
+    flex: 1;
+}
+
+.product-info p {
+    margin: 8px 0;
+    font-size: 18px;
+}
+
+.product-info strong {
+    font-weight: bold;
+}
+
+canvas {
+    max-width: 100%;
+    height: 400px;
+}

@@ -1,6 +1,7 @@
 package com.crawl.Crawling.controller;
 
 import com.crawl.Crawling.constant.Category;
+import com.crawl.Crawling.dto.ProductDto;
 import com.crawl.Crawling.dto.ProductSearchDto;
 import com.crawl.Crawling.entity.Product;
 import com.crawl.Crawling.service.ProductService;
@@ -38,8 +39,11 @@ public class ProductController {
     }
 
     @GetMapping(value = "/product/{productId}")
-    public String productDetail() {
+    public String productDetail(@PathVariable("productId") Long id, Model model) {
+        ProductDto productDto = productService.getProduct(id);
 
-        return null;
+        model.addAttribute("productDto", productDto);
+
+        return "product/productDetail";
     }
 }
