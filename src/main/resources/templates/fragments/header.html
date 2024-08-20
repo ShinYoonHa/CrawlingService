@@ -73,7 +73,7 @@
                 </li>
                 <li class="nav-item" sec:authorize="isAuthenticated()">
                         <span class="nav-link">
-                            <span th:text="${userName} + '님'"></span>
+                            <span sec:authentication="name"></span>
                         </span>
                 </li>
                 <li class="nav-item" sec:authorize="isAuthenticated()">
