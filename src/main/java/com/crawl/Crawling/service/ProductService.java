@@ -4,6 +4,7 @@ import com.crawl.Crawling.dto.ProductDto;
 import com.crawl.Crawling.dto.ProductSearchDto;
 import com.crawl.Crawling.entity.Product;
 import com.crawl.Crawling.repository.ProductRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
+//@Transactional
 public class ProductService {
     @Autowired
     private ProductRepository productRepository;
@@ -59,8 +60,11 @@ public class ProductService {
         return productRepository.findAll();
     }
     //특정 상품 조회
-    public Optional<Product> getProduct(Long item_id) {
-        return productRepository.findById(item_id);
+    public ProductDto getProduct(Long item_id) {
+        Product product =  productRepository.findById(item_id)
+                .orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 상품이 없습니다"));
+        //Product를 ProductDto로 변환
+        return ProductDto.of(product);
     }
 
     //저장된 모든 상품에 대한 정보 업데이트
