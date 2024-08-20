@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -28,6 +29,9 @@ public class SecurityConfig {
                 .defaultSuccessUrl("/") //성공하면 / 로 감
                 .usernameParameter("email") //email 가지고 memberService로 감
                 .failureUrl("/user/login/error") //실패 시 여기로 감
+        ).logout(logout -> logout
+                .logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
+                .logoutSuccessUrl("/")
         )
         ;
         // CORS 설정 추가
