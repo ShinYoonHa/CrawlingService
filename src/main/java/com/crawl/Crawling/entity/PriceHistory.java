@@ -18,6 +18,6 @@ public class PriceHistory {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    private int price;
-    private LocalDate date;
+    private int price; //가격
+    private LocalDate date; //가격 측정 날짜
 }
