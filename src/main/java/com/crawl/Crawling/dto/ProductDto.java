@@ -2,9 +2,16 @@ package com.crawl.Crawling.dto;
 
 import com.crawl.Crawling.constant.Category;
 import com.crawl.Crawling.entity.Product;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Getter
 @Setter
@@ -15,20 +22,10 @@ public class ProductDto {
     private String img;         // 상품 이미지 경로
     private Double rate;        // 평점
     private int rateCount;      // 평점 개수
+    @Enumerated(EnumType.STRING)
     private Category category;  // 카테고리
 
-    @Override
-    public String toString() {
-        return "ProductDto{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                ", img='" + img + '\'' +
-                ", rate=" + rate +
-                ", rateCount=" + rateCount +
-                ", category=" + category +
-                '}';
-    }
+    private List<PriceHistoryDto> priceHistoryDto; //가격 이력 dto
 
     public static ModelMapper modelMapper = new ModelMapper();
     
@@ -37,6 +34,17 @@ public class ProductDto {
             return null;
         }
         //Product 정보를 ProductDto 채워서 반환
-        return modelMapper.map(product, ProductDto.class);
+        ProductDto productDto = modelMapper.map(product, ProductDto.class);
+
+        // Product의 priceHistories를 PriceHistoryDto로 변환하여 productDto에 저장
+        List<PriceHistoryDto> priceHistoryDtos = product.getPriceHistories().stream()
+                .map(PriceHistoryDto::of)
+                .sorted(Comparator.comparing(PriceHistoryDto::getDate)) // 날짜 기준으로 정렬
+                .collect(Collectors.toList());
+
+        productDto.setPriceHistoryDto(priceHistoryDtos);
+
+        //priceHistoryDto 값을 가진 ProductDto 반환
+        return productDto;
     }
 }

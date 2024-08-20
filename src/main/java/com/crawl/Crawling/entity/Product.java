@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,18 +24,7 @@ public class Product {
     private Category category; //카테고리
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<PriceHistory> priceHistories;
+    private List<PriceHistory> priceHistories; //가격이력
 
-    @Override
-    public String toString() {
-        return "Product{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                ", img='" + img + '\'' +
-                ", rate=" + rate +
-                ", rate_count=" + rate_count +
-                ", category=" + category +
-                '}'+"\n";
-    }
+
 }
