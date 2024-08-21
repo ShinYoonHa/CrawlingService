@@ -1,0 +1,58 @@
+a {
+    text-decoration: none;
+}
+
+.totalCount,
+.searchResult {
+    text-align: center;
+}
+.search-container {
+    width: 1340px;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    margin: 10px auto;
+}
+.custom-container {
+    width: 1400px;
+    margin: 0 auto;
+}
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+.custom-card {
+    width: 19%; /* 19%로 설정하여 한 줄에 5개의 카드가 보이도록 조정 */
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    margin-right: 10px;
+}
+.card-img-container {
+    overflow: hidden;
+    position: relative;
+}
+
+/* 이미지 확대 효과 */
+.custom-card:hover .card-img-top {
+    transform: scale(1.1); /* 이미지 확대 비율 설정 */
+    transition: transform 0.2s ease; /* 확대 애니메이션 설정 */
+}
+
+/* 이미지의 기본 크기 설정 */
+.card-img-top {
+    width: 100%px;
+    object-fit: cover; /* 이미지 비율을 유지하면서 크기에 맞춤 */
+}
+
+/*5개 째 요소의 우측 여백을 없앰*/
+.card-container > .custom-card:nth-child(5n) {
+    margin-right: 0;
+}
+.custom-text {
+    margin: 5px;
+    font-size: 14px;
+}
+.page-item {
+    cursor: pointer;
+}
