@@ -41,45 +41,6 @@ public class CrawlingService {
 
     }
 
-//    public void detailCrawl(Long item_id) throws IOException {
-//        //매개변수로 받은 id로 상품 조회
-//        Optional<Product> searchProduct = productService.getProduct(item_id);
-//        // 값이 없는 경우 예외 발생
-//        Product product = searchProduct.orElseThrow(() -> new RuntimeException("상품이 존재하지 않습니다."));
-//
-//        String url = "https://www.coupang.com/vp/products/"+item_id; //상품 상세 페이지
-//        System.out.println("특정 상품 가격을 크롤링합니다");
-//        System.out.println("url: " + url);
-//
-//
-//        Document doc = getDocByUrl(url);
-//
-//        //상품 상세 가격
-//        String detail_price = doc.select("span.total-price strong").getFirst().text();
-//        // 가격정보에 ',' 문자 제거 후 정수형 타입으로 변환
-//        int price = Integer.parseInt(detail_price.replace(",","").replace("원", ""));
-//
-//        //검색한 상품의 가격변경
-//        product.setPrice(price);
-//
-//        System.out.println("가격이 변경된 상품을 조회합니다.");
-//        System.out.println("상품 아이디: " + product.getId());
-//        System.out.println("상품명: " + product.getName());
-//        System.out.println("가격: " + product.getPrice());
-//        System.out.println("====================================");
-//
-//        //해당 상품의 가격 이력 저장
-//        priceHistoryService.savePriceHistory(product, product.getPrice());
-//
-//    }
-//    public int crawlLatestPrice(Long itemId) throws IOException {
-//        String url = "https://www.coupang.com/vp/products/" + itemId; // 상품 상세 페이지
-//        Document doc = getDocByUrl(url);
-//
-//        // 가격 추출
-//        String detailPriceStr = doc.select("span.total-price strong").getFirst().text();
-//        return Integer.parseInt(detailPriceStr.replace(",", "").replace("원", ""));
-//    }
     //특정 상품의 변경된 최신 정보 크롤링
     public ProductDto crawlLatestProductStatus(ProductDto productDto) throws IOException {
         String url = "https://www.coupang.com/vp/products/" + productDto.getId(); // 상품 상세 페이지
@@ -111,7 +72,7 @@ public class CrawlingService {
         }
         productDto.setPrice(detail_price);
         productDto.setRate(detail_rate);
-        productDto.setRateCount(detail_rate_count);
+        productDto.setRate_count(detail_rate_count);
 
         return productDto;
     }

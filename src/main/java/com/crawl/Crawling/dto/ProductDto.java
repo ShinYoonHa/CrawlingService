@@ -21,7 +21,7 @@ public class ProductDto {
     private int price;          // 가격
     private String img;         // 상품 이미지 경로
     private Double rate;        // 평점
-    private int rateCount;      // 평점 개수
+    private int rate_count;      // 평점 개수
     @Enumerated(EnumType.STRING)
     private Category category;  // 카테고리
 

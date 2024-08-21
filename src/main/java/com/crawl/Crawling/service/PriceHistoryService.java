@@ -36,17 +36,4 @@ public class PriceHistoryService {
         return priceHistoryRepository.findAll();
     }
 
-//    //모든 가격 이력 업데이트
-//    public void updateAllHistory() throws IOException {
-//        // 모든 상품 조회
-//        List<Product> products = productService.getAllProducts();
-//
-//        for (Product product : products) {
-//            // 상품의 상세 페이지를 크롤링하여 최신 가격을 가져오는 메서드 호출
-//            int latestPrice = crawlingService.crawlLatestPrice(product.getId());
-//
-//            // 가격 히스토리에 저장
-//            savePriceHistory(product, latestPrice);
-//        }
-//    }
 }

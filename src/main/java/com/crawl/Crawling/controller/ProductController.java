@@ -23,7 +23,7 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping(value = {"/category={category}/page={page}", "/category={category}"})
-    public String categoryList(ProductSearchDto productSearchDto, Model model,
+    public String productList(ProductSearchDto productSearchDto, Model model,
                                @PathVariable("category") String category, @PathVariable("page") Optional<Integer> page) {
         //page.isPresent() 값 있으면 page.get(), 없으면 0 반환. 페이지 당 사이즈 60개
         productSearchDto.setSearchCategory(category);
@@ -35,7 +35,7 @@ public class ProductController {
         model.addAttribute("productSearchDto", productSearchDto);
         model.addAttribute("maxPage", 10);
 
-        return "product/categoryList"; //카테고리 상품 메인 페이지로 이동
+        return "product/productList"; //카테고리 상품 메인 페이지로 이동
     }
 
     @GetMapping(value = "/product/{productId}")

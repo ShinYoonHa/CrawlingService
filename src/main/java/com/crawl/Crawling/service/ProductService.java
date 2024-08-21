@@ -84,7 +84,7 @@ public class ProductService {
 
             findProduct.setPrice(productDto.getPrice());
             findProduct.setRate(productDto.getRate());
-            findProduct.setRate_count(productDto.getRateCount());
+            findProduct.setRate_count(productDto.getRate_count());
             //영속성 컨텍스트에서 관리되지만 db에 변경사항을 저장 및 추가 시 명시적으로 save 실행.
             productRepository.save(findProduct);
 
