@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" layout:decorate="~{layouts/layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <title>마이페이지 - ShowMate</title>
+    <link rel="stylesheet" th:href="@{/css/mypage.css}" />
+</head>
+
+<div layout:fragment="content" class="container d-flex flex-column align-items-center min-vh-100">
+    <div class="mypage-container">
+        <h2>마이페이지</h2>
+        <div class="user-info">
+            <p><strong><span sec:authentication="name"></span></strong></p>
+        </div>
+        <div class="action-buttons">
+            <a href="/user/edit" class="btn btn-primary btn-block">회원정보 수정</a>
+            <a href="/user/delete" class="btn btn-danger btn-block" onclick="return confirm('정말로 회원탈퇴를 하시겠습니까?');">회원탈퇴</a>
+            <a href="/user/favorites" class="btn btn-secondary btn-block">찜한 상품</a>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="script">
+    <script>
+    </script>
+</th:block>
+
+
+</html>
