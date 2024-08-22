@@ -1,6 +1,9 @@
-/* productDetail.css */
+a {
+    text-decoration: none;
+}
+
 .product-detail-container {
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
     padding: 20px;
 }
@@ -11,9 +14,9 @@
 }
 
 .product-image {
-    width: 250px;
+    width: 300px;
     height: auto;
-    margin-right: 20px;
+    margin-right: 30px;
     border-radius: 8px;
     border: 1px solid #ddd;
 }
@@ -22,13 +25,93 @@
     flex: 1;
 }
 
+.product-info h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
 .product-info p {
-    margin: 8px 0;
+    margin: 10px 0;
     font-size: 18px;
 }
 
-.product-info strong {
-    font-weight: bold;
+.product-info .price {
+    font-size: 24px;
+}
+
+.rating-container {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+}
+
+.rating img {
+    width: 20px;
+    height: 20px;
+    margin-right: 4px;
+}
+
+.rating-count {
+    padding-top: 2px;
+    margin-left: 8px;
+    font-size: 16px;
+    color: #7b7b7b;
+}
+
+.rating .star {
+    width: 20px;
+    height: 20px;
+    background-image: url('/images/empty_star.png');
+    background-size: cover;
+    margin-right: 4px;
+}
+
+.rating .star.full {
+    background-image: url('/images/full_star.png');
+}
+
+.rating .star.half {
+    background-image: url('/images/half_star.png');
+}
+
+.highest-price {
+    color: red;
+}
+.lowest-price {
+    color: blue;
+}
+
+.notification-container {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.notification-input {
+    padding: 8px;
+    font-size: 16px;
+    margin-right: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.notification-button {
+    padding: 8px 12px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.notification-button:hover {
+    background-color: #0056b3;
 }
 
 canvas {

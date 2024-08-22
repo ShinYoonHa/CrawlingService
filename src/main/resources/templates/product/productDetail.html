@@ -5,25 +5,39 @@
 <head>
     <meta charset="UTF-8">
     <title>상품 상세정보 - ShowMate</title>
-    <link rel="stylesheet" th:href="@{/css/productDetail.css}" />
+    <link rel="stylesheet" th:href="@{/css/productDetail.css}"/>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0"></script>
 </head>
 
+<body>
 <div layout:fragment="content">
     <div class="product-detail-container">
-        <h1 th:text="${productDto.name}">Product Name</h1>
         <div class="product-detail-info">
             <!-- 상품 이미지 -->
-            <img th:src="@{${productDto.img}}" alt="Product Image" class="product-image" />
+            <img th:src="@{${productDto.img}}" alt="Product Image" class="product-image"/>
 
             <!-- 상품 정보 -->
             <div class="product-info">
-                <p><strong>Price:</strong> <span th:text="${productDto.price}">0</span> 원</p>
-                <p><strong>Category:</strong> <span th:text="${productDto.category}">Category</span></p>
-                <p><strong>Rating:</strong> <span th:text="${productDto.rate}">0.0</span> / 5.0</p>
-                <p><strong>Rating Count:</strong> <span th:text="${productDto.rate_count}">0</span></p>
+                <p><a th:href="'/category='+${productDto.category}">[[${productDto.category.getCategory_value()}]]</a></p>
+                <h1 th:text="${productDto.name}">Product Name</h1>
+                <p class="price"><strong> <span id="price" th:text="${productDto.price}">0</span> 원</strong></p>
+
+                <!-- Rating -->
+                <div class="rating-container">
+                    <div id="rating" class="rating" th:data-rate="${productDto.rate}"></div>
+                    <span class="rating-count" th:text="${productDto.rate_count}+'개 상품평'"> (0)</span>
+                </div>
+
+                <p>역대최고가 <strong class="highest-price"><span id="highestPrice" th:text="${productDto.price}">0</span>원</strong></p>
+                <p>역대최저가 <strong class="lowest-price"><span id="lowestPrice" th:text="${productDto.price}">0</span>원</strong></p>
+
+                <!-- 알림 받기 -->
+                <div class="notification-container">
+                    <input type="number" placeholder="Enter desired price" class="notification-input"/>
+                    <button class="notification-button">알림 받기</button>
+                </div>
             </div>
         </div>
 
@@ -35,6 +49,49 @@
 
 <th:block layout:fragment="script">
     <script th:inline="javascript">
+        // 페이지가 로드되었을 때 실행
+        document.addEventListener('DOMContentLoaded', function() {
+            // 숫자 포맷팅 함수
+            function formatNumber(number) {
+                return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
+            // 가격 포맷팅
+            const priceElement = document.getElementById('price');
+            const highestPriceElement = document.getElementById('highestPrice');
+            const lowestPriceElement = document.getElementById('lowestPrice');
+
+            if (priceElement) {
+                priceElement.textContent = formatNumber(parseInt(priceElement.textContent.replace(/,/g, ''), 10));
+            }
+            if (highestPriceElement) {
+                highestPriceElement.textContent = formatNumber(parseInt(highestPriceElement.textContent.replace(/,/g, ''), 10));
+            }
+            if (lowestPriceElement) {
+                lowestPriceElement.textContent = formatNumber(parseInt(lowestPriceElement.textContent.replace(/,/g, ''), 10));
+            }
+
+            // 별점 처리
+            const ratingElement = document.getElementById('rating');
+            const rate = parseFloat(ratingElement.getAttribute('data-rate'));
+            const fullStars = Math.floor(rate);
+            const halfStar = rate % 1 !== 0;
+
+            for (let i = 0; i < 5; i++) {
+                const starElement = document.createElement('div');
+                starElement.classList.add('star');
+
+                if (i < fullStars) {
+                    starElement.classList.add('full');
+                } else if (i === fullStars && halfStar) {
+                    starElement.classList.add('half');
+                }
+
+                ratingElement.appendChild(starElement);
+            }
+        });
+
+        // 가격 히스토리 그래프
         const priceHistories = /*[[${productDto.priceHistoryDto}]]*/ [];
 
         const dates = priceHistories.map(history => history.date);
@@ -50,6 +107,8 @@
                     data: prices,
                     borderColor: 'rgba(75, 192, 192, 1)',
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    pointRadius: 6, // 점 크기
+                    pointHoverRadius: 8, // 호버 시 점 크기
                 }]
             },
             options: {
@@ -67,9 +126,26 @@
                     y: {
                         beginAtZero: true
                     }
+                },
+                plugins: {
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return 'Price: ' + tooltipItem.formattedValue + ' 원';
+                            }
+                        }
+                    }
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true,
+                    axis: 'x' // x축 기준으로 호버 효과 발생
                 }
             }
         });
     </script>
 </th:block>
+</body>
 </html>

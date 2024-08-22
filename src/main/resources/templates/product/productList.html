@@ -31,11 +31,13 @@
                             <div class="card-img-container">
                                 <img th:src="${product.img}" class="card-img-top" th:alt="${product.name}">
                             </div>
-                            <div class="card-body p-3">
+                            <div class="card-body p-1">
                                 <h6 class="card-title"><strong>[[${product.name}]]</strong></h6>
-                                <p class="custom-text">가격 : [[${product.price}]]</p>
-                                <p class="custom-text">평점 : [[${product.rate}]]</p>
-                                <p class="custom-text">평점 개수 : [[${product.rate_count}]]</p>
+                                <p class="price">가격 : [[${product.price}]]원</p>
+                                <div class="rating-container">
+                                    <div class="rating" th:data-rate="${product.rate}"></div>
+                                    <span class="rating-count" th:text="${product.rate_count}+'개 상품평'"> (0)</span>
+                                </div>
                             </div>
                         </a>
                     </div>
@@ -49,16 +51,16 @@
             <ul class="pagination justify-content-center">
                 <!--                items.first : 첫번째 페이지를 가리키는가? 가리키면 비활성화(disabled), 아니면 활성화-->
                 <li class="page-item" th:classappend="${products.first} ? 'disabled'">
-                    <a th:onclick="'javascript:page('+${products.number - 1} + ')'" aria-label="Previous" class="page-link">
+                    <a class="page-link" th:attr="data-page=${products.number - 1}" aria-label="Previous">
                         <span aria-hidden="true">Previous</span>
                     </a>
                 </li>
                 <!--                페이지 번호는 0 부터 시작-->
                 <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${products.number eq page-1} ? 'active' : ''">
-                    <a th:onclick="'javascript:page('+${page-1} +')'" th:inline="text" class="page-link">[[${page}]]</a>
+                    <a class="page-link" th:attr="data-page=${page-1}">[[${page}]]</a>
                 </li>
                 <li class="page-item" th:classappend="${products.last} ? 'disabled'">
-                    <a th:onclick="'javascript:page(' + ${products.number + 1} +')'" aria-label="Next" class="page-link">
+                    <a class="page-link" th:attr="data-page=${products.number + 1}" aria-label="Next">
                         <span aria-hidden="true">Next</span>
                     </a>
                 </li>
@@ -69,26 +71,68 @@
 <th:block layout:fragment="script">
     <script th:inline="javascript">
         $(document).ready(function () {
+            // 숫자 포맷팅 함수
+            function formatNumber(number) {
+                return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
             $("#searchBtn").on("click", function (e) {
                 e.preventDefault(); //검색 시 form 태그 전송 막음.
-                page(0);
+                pageHandler(0); // 첫 번째 페이지로 이동합니다.
             });
             // 공연명 잘라서 표시하는 함수 호출
             $(".card-title strong").each(function() {
                 var text = $(this).text();
-                if (text.length > 33) { // 표시할 최대 길이 설정
-                    $(this).text(text.substring(0, 33) + "⋯");
+                if (text.length > 31) { // 표시할 최대 길이 설정
+                    $(this).text(text.substring(0, 31) + "⋯");
                 }
             });
+            // 가격 포맷팅
+            $(".price").each(function() {
+                var priceText = $(this).text();
+                var price = priceText.replace(/[^0-9]/g, ''); // 숫자만 추출
+                $(this).text(priceText.replace(price, formatNumber(parseInt(price, 10))));
+            });
+
+            // 별점 처리
+            $('.rating').each(function() {
+                var ratingElement = $(this);
+                var rate = parseFloat(ratingElement.data('rate'));
+                var fullStars = Math.floor(rate);
+                var halfStar = rate % 1 !== 0;
+
+                // 기존 별점 제거
+                ratingElement.empty();
+
+                for (let i = 0; i < 5; i++) {
+                    const starElement = $('<div></div>').addClass('star');
+                    if (i < fullStars) {
+                        starElement.addClass('full');
+                    } else if (i === fullStars && halfStar) {
+                        starElement.addClass('half');
+                    }
+                    ratingElement.append(starElement);
+                }
+            });
+
+            // 페이지네이션 클릭 이벤트 핸들러
+            $(document).on("click", ".page-link", function (e) {
+                e.preventDefault(); // 링크의 기본 동작을 막습니다.
+
+                var pageNumber = $(this).data("page"); // data-page 속성에서 페이지 번호를 가져옵니다.
+                if (pageNumber !== undefined) {
+                    pageHandler(pageNumber);
+                }
+            });
+
+            function pageHandler(pageNumber) {
+                var searchCategory = $("#searchCategory").val();
+                var searchQuery = $("#searchQuery").val();
+
+                location.href = "/category=" + searchCategory + "/page=" + pageNumber + "?searchCategory=" + searchCategory +
+                "&searchQuery=" + searchQuery;
+            }
         });
-
-        function page(page) {
-            var searchCategory = $("#searchCategory").val();
-            var searchQuery = $("#searchQuery").val();
-
-            location.href = "/category=" + searchCategory+ "/page=" + page + "?searchCategory=" + searchCategory +
-            "&searchQuery=" + searchQuery;
-        }
     </script>
 </th:block>
 </html>

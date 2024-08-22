@@ -7,14 +7,14 @@ a {
     text-align: center;
 }
 .search-container {
-    width: 1340px;
+    width: 1100px;
     display: flex;
     align-items: center;
     justify-content: end;
     margin: 10px auto;
 }
 .custom-container {
-    width: 1400px;
+    width: 1100px;
     margin: 0 auto;
 }
 .card-container {
@@ -43,6 +43,45 @@ a {
 .card-img-top {
     width: 100%px;
     object-fit: cover; /* 이미지 비율을 유지하면서 크기에 맞춤 */
+}
+.card-title {
+    font-size: 0.9rem;
+}
+.price {
+    font-size: 0.8rem;
+}
+
+/*별점 처리*/
+.rating-container {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    justify-content: center; /* 가운데 정렬 */
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    margin-right: 4px; /* 별과 개수 사이에 간격 추가 */
+}
+
+.rating .star {
+    width: 14px;
+    height: 14px;
+    background-image: url('/images/empty_star.png');
+    background-size: cover;
+    margin-right: 2px; /* 별 사이에 간격 조정 */
+}
+
+.rating .star.full {
+    background-image: url('/images/full_star.png');
+}
+
+.rating .star.half {
+    background-image: url('/images/half_star.png');
+}
+.rating-count {
+    font-size: 14px;
 }
 
 /*5개 째 요소의 우측 여백을 없앰*/
