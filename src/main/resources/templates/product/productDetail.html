@@ -64,10 +64,60 @@
 
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-        // 페이지가 로드되었을 때 실행
         document.addEventListener('DOMContentLoaded', function() {
             let liked = [[${isLiked}]]; // 기본값은 Controller에서 보내준 isLiked 값
-            isLiked(liked); //isLiked() 함수 실행
+            const token = $("meta[name='_csrf']").attr("content");
+            const header = $("meta[name='_csrf_header']").attr("content");
+
+            const likeButton = document.getElementById('likeButton');
+            const likeIcon = document.getElementById('likeIcon');
+            let isLoggedIn = [[${isLoggedIn ? 'true' : 'false'}]]; // 문자열로 변환
+
+            // 좋아요 상태에 따라 아이콘 변경
+            function updateLikeIcon(isLiked) {
+                likeIcon.src = isLiked ? '/images/heart.png' : '/images/heart-outline.png';
+            }
+            updateLikeIcon(liked); // 아이콘 초기화
+
+            if (isLoggedIn === 'false') {
+                likeButton.disabled = true; // 로그인하지 않은 경우 버튼 비활성화
+            } else {
+                likeButton.addEventListener('click', function() {
+                    liked = !liked; // 상태 토글
+                    updateLikeIcon(liked); // 아이콘 업데이트
+
+                    const paramData = {
+                        productId: [[${productDto.id}]],
+                        liked: liked
+                    };
+
+                    $.ajax({
+                        url: "/product/like",
+                        method: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(paramData),
+                        dataType: "json",
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader(header, token);
+                        },
+                        success: (res) => {
+                            if (res.message) { // 좋아요 등록 할 때만 뜨게
+                                alert(res.message);
+                            }
+                        },
+                        error: (xhr, status, error) => {
+                            console.log("Like Error: ", status, error);
+                        }
+                    });
+                });
+            }
+
+            // 공유하기 버튼 기능 (간단히 알림으로 처리)
+            const shareButton = document.getElementById('shareButton');
+            shareButton.addEventListener('click', function() {
+                alert('공유하기 기능이 클릭되었습니다!');
+                // 실제 공유 기능은 이곳에 추가
+            });
 
             // 숫자 포맷팅 함수
             function formatNumber(number) {
@@ -107,110 +157,61 @@
 
                 ratingElement.appendChild(starElement);
             }
-            var token = $("meta[name='_csrf']").attr("content");
-            var header = $("meta[name='_csrf_header']").attr("content");
 
-            // 좋아요 버튼 토글 기능
-            const likeButton = document.getElementById('likeButton');
-            const likeIcon = document.getElementById('likeIcon');
+            // 가격 히스토리 그래프
+            const priceHistories = /*[[${productDto.priceHistoryDto}]]*/ [];
 
-            function isLiked(liked) { //들어온 좋아요 인자 값에 따라 좋아요 이미지 변경
-                if (liked) {
-                    likeIcon.src = '/images/heart.png'; // 좋아요 눌린 상태
-                } else {
-                    likeIcon.src = '/images/heart-outline.png'; // 좋아요 안 눌린 상태
-                }
-            }
+            const dates = priceHistories.map(history => history.date);
+            const prices = priceHistories.map(history => history.price);
 
-            likeButton.addEventListener('click', function() {
-                liked = !liked; // 상태 토글
-                isLiked(liked); //isLiked() 함수 실행
-                var paramData = {
-                    productId: [[${productDto.id}]],
-                    liked: liked,
-                }
-                var param = JSON.stringify(paramData);
-                var url = "/product/like";
-                $.ajax({
-                    url: url,
-                    method: "POST",
-                    contentType: "application/json",
-                    data: param,
-                    dataType: "json",
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader(header, token);
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'Price',
+                        data: prices,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day',
+                                tooltipFormat: 'YYYY-MM-DD',
+                                displayFormats: {
+                                    day: 'YYYY-MM-DD'
+                                }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
                     },
-                    success: (res) => {
-                        alert(res.message);
-                    },
-                    error: (xhr, status, error) => {
-                        console.log("Like Error: ", status, error);
-                    }
-                });
-            });
-            //end of addEventListener
-
-            // 공유하기 버튼 기능 (간단히 알림으로 처리)
-            const shareButton = document.getElementById('shareButton');
-            shareButton.addEventListener('click', function() {
-                alert('공유하기 기능이 클릭되었습니다!');
-                // 실제 공유 기능은 이곳에 추가
-            });
-        });
-
-        // 가격 히스토리 그래프
-        const priceHistories = /*[[${productDto.priceHistoryDto}]]*/ [];
-
-        const dates = priceHistories.map(history => history.date);
-        const prices = priceHistories.map(history => history.price);
-
-        const ctx = document.getElementById('priceChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: dates,
-                datasets: [{
-                    label: 'Price',
-                    data: prices,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    pointRadius: 6, // 점 크기
-                    pointHoverRadius: 8, // 호버 시 점 크기
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
-                        type: 'time',
-                        time: {
-                            unit: 'day',
-                            tooltipFormat: 'YYYY-MM-DD',
-                            displayFormats: {
-                                day: 'YYYY-MM-DD'
+                    plugins: {
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    return 'Price: ' + tooltipItem.formattedValue + ' 원';
+                                }
                             }
                         }
                     },
-                    y: {
-                        beginAtZero: true
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true,
+                        axis: 'x'
                     }
-                },
-                plugins: {
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                        callbacks: {
-                            label: function(tooltipItem) {
-                                return 'Price: ' + tooltipItem.formattedValue + ' 원';
-                            }
-                        }
-                    }
-                },
-                hover: {
-                    mode: 'nearest',
-                    intersect: true,
-                    axis: 'x' // x축 기준으로 호버 효과 발생
                 }
-            }
+            });
         });
     </script>
 </th:block>

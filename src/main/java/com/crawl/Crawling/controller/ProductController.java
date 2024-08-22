@@ -54,12 +54,18 @@ public class ProductController {
     @GetMapping(value = "/product/{productId}")
     public String productDetail(@PathVariable("productId") Long id, Model model, Principal principal) {
         ProductDto productDto = productService.getProduct(id);
-        User user = userService.findByEmail(principal.getName());
-        Likes likes = likesService.findByUserAndProduct(user, productService.findById(id));
-        boolean isLiked = (likes != null);
+        boolean isLoggedIn = (principal != null); // 로그인 여부 확인
+
+        if(isLoggedIn) { //로그인된 사용자가 있을 경우
+            User user = userService.findByEmail(principal.getName());
+            Likes likes = likesService.findByUserAndProduct(user, productService.findById(id));
+            model.addAttribute("isLiked", likes != null);
+        } else {
+            model.addAttribute("isLiked", false);
+        }
 
         model.addAttribute("productDto", productDto);
-        model.addAttribute("isLiked", isLiked);
+        model.addAttribute("isLoggedIn", isLoggedIn); // 로그인 여부 추가
 
         return "product/productDetail";
     }
