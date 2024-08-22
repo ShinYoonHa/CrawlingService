@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -82,5 +84,29 @@ public class UserController {
             res.put("message", "해당 정보로 가입된 사용자를 찾을 수 없습니다");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res); // 404 Not Found
         }
+    }
+    @GetMapping(value = "/mypage")
+    public String mypage() {
+        return "user/mypage";
+    }
+    // 회원정보 수정 페이지로 이동
+    @GetMapping("/edit")
+    public String editForm(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        // 사용자 정보를 가져와서 모델에 추가
+        String username = userDetails.getUsername(); //getUsername() 시 사용자 이메일이 넘어온다
+        User user = userService.findByEmail(username); // UserService에서 사용자 정보를 가져오는 메서드
+
+        model.addAttribute("name", user.getName());
+        model.addAttribute("email", user.getEmail());
+
+        return "user/editForm"; // 회원정보 수정 페이지로 이동
+    }
+    @PostMapping(value = "/edit")
+    public String editForm(@Valid UserDto userDto, BindingResult bindingResult, Model model) {
+        //MemberFormDto 변수에 설정해놓은 조건 검사, BindingResult에 결과 저장
+        if(bindingResult.hasErrors()) { //다시 회원가입 화면으로
+            return "user/editForm";
+        }
+        return "redirect:/";
     }
 }

@@ -22,6 +22,9 @@ public class UserService implements UserDetailsService {
     public User findByNameAndTel(String name, String tel) {
         return userRepository.findByNameAndTel(name, tel);
     }
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
     //중복된 User 있는지 확인하는 메소드
     private void checkDuplicateUser(User user) {
         User findUser = userRepository.findByEmail(user.getEmail());
