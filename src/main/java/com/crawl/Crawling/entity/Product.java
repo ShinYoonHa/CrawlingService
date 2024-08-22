@@ -26,5 +26,9 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PriceHistory> priceHistories; //가격이력
 
+    // 연관관계 매핑
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Likes> likes; // 이 상품을 좋아요 한 사용자 리스트
+
 
 }

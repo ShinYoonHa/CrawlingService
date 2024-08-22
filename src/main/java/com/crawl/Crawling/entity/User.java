@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -24,6 +26,10 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    //연관관계 매핑
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Likes> likes;
 
     public static User createUser(UserDto userDto, PasswordEncoder passwordEncoder) {
         User user = new User();

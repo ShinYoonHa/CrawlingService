@@ -66,6 +66,9 @@ public class ProductService {
         //Product를 ProductDto로 변환
         return ProductDto.of(product);
     }
+    public Product findById(Long id) {
+        return productRepository.findById(id).get();
+    }
 
     //저장된 모든 상품에 대한 정보 업데이트
     public void updateAllProduct() throws IOException {
