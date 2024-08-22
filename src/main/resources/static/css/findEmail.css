@@ -80,7 +80,30 @@ body {
     color: white;
 }
 
-.findEmail-title, .result-message {
+.findEmail-title {
     text-align: center;
     margin: 20px 0;
+}
+
+.result-message {
+    text-align: center;
+    margin: 10px 0;
+}
+/* 추가 링크 스타일 */
+.additional-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.additional-links a {
+    font-size: 0.95rem;
+    color: #555;
+    position: relative;
+}
+
+.additional-links a:hover {
+    color: #7048cd;
+    font-weight: bold;
+    text-decoration: underline;
 }

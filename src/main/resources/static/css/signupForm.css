@@ -1,3 +1,10 @@
+/* 전체 페이지 배경 */
+body {
+    background: linear-gradient(120deg, #9b7cff 0%, #c1a4ff 50%, #e0d0ff 100%);
+    min-height: 100vh;
+    margin: 0;
+}
+
 /* 회원가입 컨테이너 스타일 */
 .signup-container {
     background: white;

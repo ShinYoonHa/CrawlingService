@@ -22,9 +22,14 @@
                 <label for="tel">전화번호</label>
             </div>
             <button class="btn btn-find w-100" type="submit" onclick="findEmail()">이메일 찾기</button>
+            <h5 id="resultMessage" class="result-message"></h5>
+            <div class="additional-links">
+                <a href="/user/login" class="text-decoration-none">계정을 찾으셨나요? 로그인</a>
+            </div>
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
         </form>
-        <h5 id="resultMessage" class="result-message"></h5>
+
+
     </div>
 </div>
 <th:block layout:fragment="script">
