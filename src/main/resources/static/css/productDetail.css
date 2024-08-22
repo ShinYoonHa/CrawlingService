@@ -25,11 +25,6 @@ a {
     flex: 1;
 }
 
-.product-info h1 {
-    font-size: 28px;
-    margin-bottom: 10px;
-}
-
 .product-info p {
     margin: 10px 0;
     font-size: 18px;
@@ -37,6 +32,7 @@ a {
 
 .product-info .price {
     font-size: 24px;
+    margin-right: 10px;
 }
 
 .rating-container {
@@ -114,7 +110,52 @@ a {
     background-color: #0056b3;
 }
 
+.goto-btn {
+    padding: 4px 8px;
+        font-size: 1rem;
+        background-color: #ff0000;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+}
+
+.goto-btn:hover {
+    background-color: #e10000;
+}
+.d-flex {
+    height: 2rem;
+    align-items: center;
+}
+
 canvas {
     max-width: 100%;
     height: 400px;
+}
+
+.detail-top {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.detail-top a {
+    font-size: 1.2rem;
+    line-height: 1rem; /* 텍스트 높이 조정 */
+    margin-right: 10px;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 5px;
+    line-height: 1rem; /* 버튼 높이 조정 */
+}
+
+.icon {
+    width: 1.2rem;
+    height: 1.2rem;
+    margin: 0 1px;
 }

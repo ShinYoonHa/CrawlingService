@@ -4,8 +4,11 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <title>상품 상세정보 - ShowMate</title>
     <link rel="stylesheet" th:href="@{/css/productDetail.css}"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0"></script>
@@ -20,22 +23,34 @@
 
             <!-- 상품 정보 -->
             <div class="product-info">
-                <p><a th:href="'/category='+${productDto.category}">[[${productDto.category.getCategory_value()}]]</a></p>
-                <h1 th:text="${productDto.name}">Product Name</h1>
-                <p class="price"><strong> <span id="price" th:text="${productDto.price}">0</span> 원</strong></p>
+                <div class="detail-top">
+                    <a th:href="'/category='+${productDto.category}">[[${productDto.category.getCategory_value()}]]</a>
+                    <button id="likeButton" class="icon-button">
+                        <img id="likeIcon" th:src="@{/images/heart-outline.png}" alt="Like" class="icon"/>
+                    </button>
+                    <button id="shareButton" class="icon-button">
+                        <img th:src="@{/images/share.png}" alt="Share" class="icon"/>
+                    </button>
+                </div>
 
+                <h5 th:text="${productDto.name}">Product Name</h5>
                 <!-- Rating -->
                 <div class="rating-container">
                     <div id="rating" class="rating" th:data-rate="${productDto.rate}"></div>
                     <span class="rating-count" th:text="${productDto.rate_count}+'개 상품평'"> (0)</span>
                 </div>
 
+                <div class="d-flex">
+                    <p class="price"><strong> <span id="price" th:text="${productDto.price}">0</span>원</strong></p>
+                    <button type="button" class="goto-btn"
+                            th:onclick="'location.href=\'https://www.coupang.com/vp/products/\' + ' + ${productDto.id}">사러가기</button>
+                </div>
                 <p>역대최고가 <strong class="highest-price"><span id="highestPrice" th:text="${productDto.price}">0</span>원</strong></p>
                 <p>역대최저가 <strong class="lowest-price"><span id="lowestPrice" th:text="${productDto.price}">0</span>원</strong></p>
 
                 <!-- 알림 받기 -->
                 <div class="notification-container">
-                    <input type="number" placeholder="Enter desired price" class="notification-input"/>
+                    <input type="number" placeholder="가격을 입력하세요" class="notification-input"/>
                     <button class="notification-button">알림 받기</button>
                 </div>
             </div>
@@ -51,6 +66,9 @@
     <script th:inline="javascript">
         // 페이지가 로드되었을 때 실행
         document.addEventListener('DOMContentLoaded', function() {
+            let liked = [[${isLiked}]]; // 기본값은 Controller에서 보내준 isLiked 값
+            isLiked(liked); //isLiked() 함수 실행
+
             // 숫자 포맷팅 함수
             function formatNumber(number) {
                 return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -89,6 +107,55 @@
 
                 ratingElement.appendChild(starElement);
             }
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+
+            // 좋아요 버튼 토글 기능
+            const likeButton = document.getElementById('likeButton');
+            const likeIcon = document.getElementById('likeIcon');
+
+            function isLiked(liked) { //들어온 좋아요 인자 값에 따라 좋아요 이미지 변경
+                if (liked) {
+                    likeIcon.src = '/images/heart.png'; // 좋아요 눌린 상태
+                } else {
+                    likeIcon.src = '/images/heart-outline.png'; // 좋아요 안 눌린 상태
+                }
+            }
+
+            likeButton.addEventListener('click', function() {
+                liked = !liked; // 상태 토글
+                isLiked(liked); //isLiked() 함수 실행
+                var paramData = {
+                    productId: [[${productDto.id}]],
+                    liked: liked,
+                }
+                var param = JSON.stringify(paramData);
+                var url = "/product/like";
+                $.ajax({
+                    url: url,
+                    method: "POST",
+                    contentType: "application/json",
+                    data: param,
+                    dataType: "json",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader(header, token);
+                    },
+                    success: (res) => {
+                        alert(res.message);
+                    },
+                    error: (xhr, status, error) => {
+                        console.log("Like Error: ", status, error);
+                    }
+                });
+            });
+            //end of addEventListener
+
+            // 공유하기 버튼 기능 (간단히 알림으로 처리)
+            const shareButton = document.getElementById('shareButton');
+            shareButton.addEventListener('click', function() {
+                alert('공유하기 기능이 클릭되었습니다!');
+                // 실제 공유 기능은 이곳에 추가
+            });
         });
 
         // 가격 히스토리 그래프
