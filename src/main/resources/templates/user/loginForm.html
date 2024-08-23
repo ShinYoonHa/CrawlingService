@@ -34,6 +34,7 @@
             <p th:if="${loginErrorMsg}" class="error" th:text="${loginErrorMsg}"></p>
             <button class="btn btn-login w-100" type="submit">로그인</button>
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <input type="hidden" name="redirect" th:value="${param.redirect}" />
         </form>
 
         <div class="additional-links ">
