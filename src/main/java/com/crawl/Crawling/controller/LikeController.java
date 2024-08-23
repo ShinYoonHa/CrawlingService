@@ -25,22 +25,6 @@ public class LikeController {
     private final ProductService productService;
     private final LikesService likesService;
 
-    //상품 상세 페이지에서 좋아요 눌렀을 경우
-    @PostMapping(value = "")
-    public ResponseEntity<Map<String, String>> productLike(@RequestBody LikeRequestDto likeRequestDto, Principal principal) {
-        boolean isLike = likeRequestDto.isLiked(); //ajax로 넘어온 true/false
-        User user = userService.findByEmail(principal.getName()); //현재 로그인된 사용자의 아이디
-        Product product = productService.findById(likeRequestDto.getProductId());
-
-        likesService.toggleLikes(user, product);
-
-        Map<String, String> res = new HashMap<>();
-        if(isLike) {
-            res.put("message", "상품을 좋아요한 상품에 추가합니다");
-        }
-        return ResponseEntity.ok(res);
-    }
-
     //마이페이지 내 좋아요 상품목록 리스트
     @GetMapping("/likeList")
     public String likeList(Principal principal, Model model) {
@@ -55,6 +39,22 @@ public class LikeController {
         }
         model.addAttribute("products", likedProductList);
         return "like/likeList";
+    }
+
+    //상품 상세 페이지에서 좋아요 눌렀을 경우
+    @PostMapping(value = "")
+    public ResponseEntity<Map<String, String>> productLike(@RequestBody LikeRequestDto likeRequestDto, Principal principal) {
+        boolean isLike = likeRequestDto.isLiked(); //ajax로 넘어온 true/false
+        User user = userService.findByEmail(principal.getName()); //현재 로그인된 사용자의 아이디
+        Product product = productService.findById(likeRequestDto.getProductId());
+
+        likesService.toggleLikes(user, product);
+
+        Map<String, String> res = new HashMap<>();
+        if(isLike) {
+            res.put("message", "상품을 좋아요한 상품에 추가합니다");
+        }
+        return ResponseEntity.ok(res);
     }
 
     @PostMapping("/remove")
