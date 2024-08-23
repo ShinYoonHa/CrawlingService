@@ -2,19 +2,20 @@ package com.crawl.Crawling.controller;
 
 import com.crawl.Crawling.dto.UserDto;
 import com.crawl.Crawling.entity.User;
+import com.crawl.Crawling.service.LikesService;
+import com.crawl.Crawling.service.ProductService;
 import com.crawl.Crawling.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +25,8 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final LikesService likesService;
+    private final ProductService productService;
 
 //    String confirm = ""; //이메일 인증 시 보낼 코드
 //    boolean confirmCheck = false; //이메일 인증 코드 일치하는지 체크
@@ -53,6 +56,7 @@ public class UserController {
         }
         return "redirect:/";
     }
+
     @GetMapping(value = "/login")
     public String login() {
         return "user/loginForm";
@@ -67,7 +71,6 @@ public class UserController {
     public String findEmail() {
         return "user/findEmail";
     }
-
     @PostMapping(value = "/find-email")
     @ResponseBody
     public ResponseEntity<Map<String, String>> findEmail(@RequestBody Map<String, String> req) {
@@ -85,15 +88,17 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res); // 404 Not Found
         }
     }
+
     @GetMapping(value = "/mypage")
     public String mypage() {
         return "user/mypage";
     }
+
     // 회원정보 수정 페이지로 이동
     @GetMapping("/edit")
-    public String editForm(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    public String editForm(Principal principal, Model model) {
         // 사용자 정보를 가져와서 모델에 추가
-        String username = userDetails.getUsername(); //getUsername() 시 사용자 이메일이 넘어온다
+        String username = principal.getName(); //getName() 시 사용자 이메일이 넘어온다
         User user = userService.findByEmail(username); // UserService에서 사용자 정보를 가져오는 메서드
 
         model.addAttribute("name", user.getName());
@@ -109,4 +114,5 @@ public class UserController {
         }
         return "redirect:/";
     }
+
 }
