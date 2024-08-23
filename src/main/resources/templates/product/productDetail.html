@@ -79,10 +79,8 @@
             }
             updateLikeIcon(liked); // 아이콘 초기화
 
-            if (isLoggedIn === 'false') {
-                likeButton.disabled = true; // 로그인하지 않은 경우 버튼 비활성화
-            } else {
-                likeButton.addEventListener('click', function() {
+            likeButton.addEventListener('click', function() {
+                if (isLoggedIn === 'true') {
                     liked = !liked; // 상태 토글
                     updateLikeIcon(liked); // 아이콘 업데이트
 
@@ -109,8 +107,13 @@
                             console.log("Like Error: ", status, error);
                         }
                     });
-                });
-            }
+                } else {
+                    alert("로그인이 필요한 서비스입니다.");
+                    const currentUrl = window.location.href;
+                    location.href = "/user/login?redirect=" + encodeURIComponent(currentUrl);
+                }
+            });
+
 
             // 공유하기 버튼 기능 (간단히 알림으로 처리)
             const shareButton = document.getElementById('shareButton');
