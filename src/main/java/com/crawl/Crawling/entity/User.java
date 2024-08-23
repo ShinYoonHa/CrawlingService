@@ -31,6 +31,10 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Likes> likes;
 
+    //연관관계 매핑
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<RecentView> recentViews;
+
     public static User createUser(UserDto userDto, PasswordEncoder passwordEncoder) {
         User user = new User();
         user.setName(userDto.getName());

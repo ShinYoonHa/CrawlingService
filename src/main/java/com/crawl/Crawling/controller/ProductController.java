@@ -8,6 +8,7 @@ import com.crawl.Crawling.entity.Product;
 import com.crawl.Crawling.entity.User;
 import com.crawl.Crawling.service.LikesService;
 import com.crawl.Crawling.service.ProductService;
+import com.crawl.Crawling.service.RecentViewService;
 import com.crawl.Crawling.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,7 @@ public class ProductController {
     private final ProductService productService;
     private final LikesService likesService;
     private final UserService userService;
+    private final RecentViewService recentViewService;
 
     @GetMapping(value = {"/category={category}/page={page}", "/category={category}"})
     public String productList(ProductSearchDto productSearchDto, Model model,
@@ -52,7 +54,10 @@ public class ProductController {
 
         if(isLoggedIn) { //로그인된 사용자가 있을 경우
             User user = userService.findByEmail(principal.getName());
-            Likes likes = likesService.findByUserAndProduct(user, productService.findById(id));
+            Product product = productService.findById(id);
+            Likes likes = likesService.findByUserAndProduct(user, product); //좋아요 이력 있는지 확인
+
+            recentViewService.addRecentView(user, product); //사용자와 상품으로 최근본 상품에 등록
             model.addAttribute("isLiked", likes != null);
         } else {
             model.addAttribute("isLiked", false);

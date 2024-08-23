@@ -28,7 +28,10 @@ public class Product {
 
     // 연관관계 매핑
     @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Likes> likes; // 이 상품을 좋아요 한 사용자 리스트
+    private List<Likes> likes; // 상품을 좋아요 누른 리스트
 
+    // 연관관계 매핑
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<RecentView> recentViews; //최근 본 리스트
 
 }
