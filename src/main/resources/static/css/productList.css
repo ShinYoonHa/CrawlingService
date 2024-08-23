@@ -17,6 +17,12 @@ a {
     width: 1100px;
     margin: 0 auto;
 }
+
+hr {
+    width: 1090px; /* card-container와 같은 너비 */
+    margin: 5px auto; /* 가운데 정렬 */
+    border: 1px solid #9a9a9a;
+}
 .card-container {
     display: flex;
     flex-wrap: wrap;
@@ -25,8 +31,7 @@ a {
 .custom-card {
     width: 19%; /* 19%로 설정하여 한 줄에 5개의 카드가 보이도록 조정 */
     box-sizing: border-box;
-    margin-bottom: 15px;
-    margin-right: 10px;
+    margin: 5px;
 }
 .card-img-container {
     overflow: hidden;

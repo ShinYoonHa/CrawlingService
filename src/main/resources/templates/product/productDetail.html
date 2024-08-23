@@ -26,7 +26,7 @@
                 <div class="detail-top">
                     <a th:href="'/category='+${productDto.category}">[[${productDto.category.getCategory_value()}]]</a>
                     <button id="likeButton" class="icon-button">
-                        <img id="likeIcon" th:src="@{/images/heart-outline.png}" alt="Like" class="icon"/>
+                        <img id="likeIcon" th:src="@{/images/heart_outline.png}" alt="Like" class="icon"/>
                     </button>
                     <button id="shareButton" class="icon-button">
                         <img th:src="@{/images/share.png}" alt="Share" class="icon"/>
@@ -75,7 +75,7 @@
 
             // 좋아요 상태에 따라 아이콘 변경
             function updateLikeIcon(isLiked) {
-                likeIcon.src = isLiked ? '/images/heart.png' : '/images/heart-outline.png';
+                likeIcon.src = isLiked ? '/images/heart.png' : '/images/heart_outline.png';
             }
             updateLikeIcon(liked); // 아이콘 초기화
 
