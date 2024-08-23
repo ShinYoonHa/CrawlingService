@@ -12,7 +12,9 @@
 
 <div layout:fragment="content" class="container d-flex flex-column align-items-center min-vh-100">
     <div class="mypage-container">
-        <h2>마이페이지</h2>
+        <!-- 이미지 추가 -->
+        <img src="/images/profile_user.png" alt="Profile" class="profile-image" />
+
         <div class="user-info">
             <p><strong><span sec:authentication="name"></span></strong></p>
         </div>
@@ -20,6 +22,7 @@
             <a href="/user/edit" class="btn btn-primary btn-block">회원정보 수정</a>
             <a href="/user/delete" class="btn btn-danger btn-block" onclick="return confirm('정말로 회원탈퇴를 하시겠습니까?');">회원탈퇴</a>
             <a href="/like/likeList" class="btn btn-secondary btn-block">찜한 상품</a>
+            <a href="/recentView" class="btn btn-info btn-block">최근 본 상품</a>
         </div>
     </div>
 </div>
