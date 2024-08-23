@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <title>최근 조회한 상품 - ShowMate</title>
+    <link rel="stylesheet" th:href="@{/css/productList.css}" />
+    <link rel="stylesheet" th:href="@{/css/recentViewList.css}" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<div layout:fragment="content">
+    <div class="title-container">
+        <h3>최근 본 상품</h3>
+    </div>
+    <hr/>
+    <form role="form" method="get" th:object="${products}">
+        <div class="custom-container text-center">
+            <div class="card-container">
+                <th:block th:each="product, status: ${products}">
+                    <div class="custom-card card">
+                        <a th:href="'/product/'+${product.id}" class="text-dark">
+                            <div class="card-img-container">
+                                <img th:src="${product.img}" class="card-img-top" th:alt="${product.name}">
+                            </div>
+                            <div class="card-body p-1">
+                                <h6 class="card-title"><strong>[[${product.name}]]</strong></h6>
+                                <p class="price">가격 : [[${product.price}]]원</p>
+                                <div class="rating-container">
+                                    <div class="rating" th:data-rate="${product.rate}"></div>
+                                    <span class="rating-count" th:text="${product.rate_count}+'개 상품평'"> (0)</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function () {
+
+            // 숫자 포맷팅 함수
+            function formatNumber(number) {
+                return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
+            // 상품명 잘라서 표시하는 함수 호출
+            $(".card-title strong").each(function() {
+                var text = $(this).text();
+                if (text.length > 31) { // 표시할 최대 길이 설정
+                    $(this).text(text.substring(0, 31) + "⋯");
+                }
+            });
+            // 가격 포맷팅
+            $(".price").each(function() {
+                var priceText = $(this).text();
+                var price = priceText.replace(/[^0-9]/g, ''); // 숫자만 추출
+                $(this).text(priceText.replace(price, formatNumber(parseInt(price, 10))));
+            });
+
+            // 별점 처리
+            $('.rating').each(function() {
+                var ratingElement = $(this);
+                var rate = parseFloat(ratingElement.data('rate'));
+                var fullStars = Math.floor(rate);
+                var halfStar = rate % 1 !== 0;
+
+                // 기존 별점 제거
+                ratingElement.empty();
+
+                for (let i = 0; i < 5; i++) {
+                    const starElement = $('<div></div>').addClass('star');
+                    if (i < fullStars) {
+                        starElement.addClass('full');
+                    } else if (i === fullStars && halfStar) {
+                        starElement.addClass('half');
+                    }
+                    ratingElement.append(starElement);
+                }
+            });
+        });
+    </script>
+</th:block>
+</html>
