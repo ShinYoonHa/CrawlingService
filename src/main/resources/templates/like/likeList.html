@@ -11,6 +11,10 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <div layout:fragment="content">
+    <div class="title-container">
+        <h3>좋아요 목록</h3>
+        <p class="totalCount text-danger" th:text="'총 검색 건수: ' + ${products.size}"></p>
+    </div>
     <div class="action-bar">
         <div class="action-bar-left">
             <label for="selectAll" class="select-all-label">
@@ -18,9 +22,7 @@
             </label>
             <button id="deleteSelected" class="btn btn-danger">선택삭제</button>
         </div>
-        <p class="totalCount text-danger" th:text="'총 검색 건수: ' + ${products.size}"></p>
     </div>
-    <hr>
     <form role="form" method="get" th:object="${products}">
         <div class="custom-container text-center">
             <div class="card-container">
@@ -93,10 +95,6 @@
                 return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             }
 
-            $("#searchBtn").on("click", function (e) {
-                e.preventDefault(); //검색 시 form 태그 전송 막음.
-                pageHandler(0); // 첫 번째 페이지로 이동합니다.
-            });
             // 상품명 잘라서 표시하는 함수 호출
             $(".card-title strong").each(function() {
                 var text = $(this).text();
