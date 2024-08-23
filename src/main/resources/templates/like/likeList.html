@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <title>좋아요 목록 - ShowMate</title>
+    <link rel="stylesheet" th:href="@{/css/productList.css}" />
+    <link rel="stylesheet" th:href="@{/css/likeList.css}" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<div layout:fragment="content">
+    <div class="action-bar">
+        <div class="action-bar-left">
+            <label for="selectAll" class="select-all-label">
+                <input type="checkbox" id="selectAll"> 전체선택
+            </label>
+            <button id="deleteSelected" class="btn btn-danger">선택삭제</button>
+        </div>
+        <p class="totalCount text-danger" th:text="'총 검색 건수: ' + ${products.size}"></p>
+    </div>
+    <hr>
+    <form role="form" method="get" th:object="${products}">
+        <div class="custom-container text-center">
+            <div class="card-container">
+                <th:block th:each="product, status: ${products}">
+                    <div class="custom-card card">
+                        <!-- 체크박스 추가 -->
+                        <input type="checkbox" class="product-checkbox" th:value="${product.id}">
+                        <a th:href="'/product/'+${product.id}" class="text-dark">
+                            <div class="card-img-container">
+                                <img th:src="${product.img}" class="card-img-top" th:alt="${product.name}">
+                            </div>
+                            <div class="card-body p-1">
+                                <h6 class="card-title"><strong>[[${product.name}]]</strong></h6>
+                                <p class="price">가격 : [[${product.price}]]원</p>
+                                <div class="rating-container">
+                                    <div class="rating" th:data-rate="${product.rate}"></div>
+                                    <span class="rating-count" th:text="${product.rate_count}+'개 상품평'"> (0)</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            // 선택상품 삭제 버튼 클릭 이벤트 핸들러
+            $('#deleteSelected').on('click', function() {
+                const token = $("meta[name='_csrf']").attr("content");
+                const header = $("meta[name='_csrf_header']").attr("content");
+                const selectedProductIds = [];
+
+                $('.product-checkbox:checked').each(function() {
+                    selectedProductIds.push($(this).val());
+                });
+
+                if (selectedProductIds.length > 0) {
+                    $.ajax({
+                        url: '/like/remove',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(selectedProductIds),
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader(header, token);
+                        },
+                        success: function(res) {
+                            alert('선택한 상품이 삭제되었습니다.');
+                            location.reload(); // 페이지 새로고침
+                        },
+                        error: function(xhr, status, error) {
+                            console.log('Like Remove Error: ', status, error);
+                        }
+                    });
+                } else {
+                    alert('삭제할 상품을 선택하세요.');
+                }
+            });
+
+            // 전체 선택 체크박스 클릭 이벤트 핸들러
+            $('#selectAll').on('change', function() {
+                const isChecked = $(this).is(':checked');
+                $('.product-checkbox').prop('checked', isChecked);
+            });
+
+            // 숫자 포맷팅 함수
+            function formatNumber(number) {
+                return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
+            $("#searchBtn").on("click", function (e) {
+                e.preventDefault(); //검색 시 form 태그 전송 막음.
+                pageHandler(0); // 첫 번째 페이지로 이동합니다.
+            });
+            // 상품명 잘라서 표시하는 함수 호출
+            $(".card-title strong").each(function() {
+                var text = $(this).text();
+                if (text.length > 31) { // 표시할 최대 길이 설정
+                    $(this).text(text.substring(0, 31) + "⋯");
+                }
+            });
+            // 가격 포맷팅
+            $(".price").each(function() {
+                var priceText = $(this).text();
+                var price = priceText.replace(/[^0-9]/g, ''); // 숫자만 추출
+                $(this).text(priceText.replace(price, formatNumber(parseInt(price, 10))));
+            });
+
+            // 별점 처리
+            $('.rating').each(function() {
+                var ratingElement = $(this);
+                var rate = parseFloat(ratingElement.data('rate'));
+                var fullStars = Math.floor(rate);
+                var halfStar = rate % 1 !== 0;
+
+                // 기존 별점 제거
+                ratingElement.empty();
+
+                for (let i = 0; i < 5; i++) {
+                    const starElement = $('<div></div>').addClass('star');
+                    if (i < fullStars) {
+                        starElement.addClass('full');
+                    } else if (i === fullStars && halfStar) {
+                        starElement.addClass('half');
+                    }
+                    ratingElement.append(starElement);
+                }
+            });
+        });
+    </script>
+</th:block>
+</html>
