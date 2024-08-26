@@ -28,6 +28,7 @@ public class ProductController {
     private final UserService userService;
     private final RecentViewService recentViewService;
     private final PriceHistoryService priceHistoryService;
+    private final RecommendService recommendService;
 
     //카테고리별 상품 목록
     @GetMapping(value = {"/category={category}/page={page}", "/category={category}"})
@@ -59,20 +60,25 @@ public class ProductController {
     public String productDetail(@PathVariable("productId") Long id, Model model, Principal principal) {
         ProductDto productDto = productService.getProductDto(id);
         boolean isLoggedIn = (principal != null); // 로그인 여부 확인
+        //역대 최고&최저가 조회
         PriceHistory maxPriceHistory = priceHistoryService.findMaxPriceByProduct(productService.findById(id));
         PriceHistory minPriceHistory = priceHistoryService.findMinPriceByProduct(productService.findById(id));
-
 
         if(isLoggedIn) { //로그인된 사용자가 있을 경우
             User user = userService.findByEmail(principal.getName());
             Product product = productService.findById(id);
             Likes likes = likesService.findByUserAndProduct(user, product); //좋아요 이력 있는지 확인
 
+            //좋아요 목록, 최근 조회 목록 기반으로 추천리스트 작성
+            List<ProductDto> recommedList = recommendService.recommendProduct(user);
+
             recentViewService.addRecentView(user, product); //사용자와 상품으로 최근본 상품에 등록
             model.addAttribute("isLiked", likes != null);
+            model.addAttribute("recommendList", recommedList);
         } else {
             model.addAttribute("isLiked", false);
         }
+
         model.addAttribute("maxPrice", maxPriceHistory.getPrice());
         model.addAttribute("minPrice", minPriceHistory.getPrice());
         model.addAttribute("productDto", productDto);

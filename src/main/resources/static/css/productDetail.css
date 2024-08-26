@@ -6,6 +6,7 @@ a {
     max-width: 1000px;
     margin: 0 auto;
     padding: 20px;
+
 }
 
 .product-detail-info {
@@ -132,11 +133,6 @@ a {
     align-items: center;
 }
 
-canvas {
-    max-width: 100%;
-    height: 400px;
-}
-
 .detail-top {
     display: flex;
     align-items: center;
@@ -147,6 +143,16 @@ canvas {
     font-size: 1.2rem;
     line-height: 1rem; /* 텍스트 높이 조정 */
     margin-right: 10px;
+}
+
+.graph-container {
+    text-align: center;
+}
+
+#priceChart {
+    height: 350px;
+    width: 100%;
+    margin: 20px auto;
 }
 
 .icon-button {
@@ -162,4 +168,53 @@ canvas {
     width: 1.2rem;
     height: 1.2rem;
     margin: 0 1px;
+}
+
+/* 추천 상품 슬라이더 */
+.recommend-container {
+    text-align: center;
+}
+.product-slider {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.product-slider-container {
+    width: 100%;
+    overflow: hidden;
+}
+
+.product-slider-content {
+    display: flex;
+    transition: transform 0.5s ease;
+}
+
+.product-slider-item {
+    width: 19.5%;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.slider-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-30%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    padding: 10px;
+    z-index: 10;
+}
+
+.prev {
+    left: 10px;
+}
+
+.next {
+    right: 10px;
 }

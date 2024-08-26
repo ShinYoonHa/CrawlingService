@@ -58,8 +58,24 @@
         </div>
 
         <!-- 가격 변동 그래프 -->
-        <h2>Price History</h2>
-        <canvas id="priceChart"></canvas>
+        <div class="graph-container">
+            <h2>가격 변동 이력</h2>
+            <canvas id="priceChart"></canvas>
+        </div>
+
+        <div class="recommend-container">
+            <h2>추천 상품</h2>
+            <div class="product-slider">
+                <button class="slider-button prev" type="button">&#10094;</button>
+                <div class="product-slider-container">
+                    <div class="product-slider-content">
+                        <!-- JavaScript가 이 부분을 동적으로 업데이트합니다. -->
+                    </div>
+                </div>
+                <button class="slider-button next" type="button">&#10095;</button>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -217,6 +233,43 @@
                     }
                 }
             });
+            // 추천 상품 슬라이더
+            const recommendList = /*[[${recommendList}]]*/ [];
+            const sliderContainer = document.querySelector('.product-slider-content');
+
+            recommendList.forEach(product => {
+                const sliderItem = document.createElement('div');
+                sliderItem.className = 'product-slider-item';
+                sliderItem.innerHTML = `
+                    <img src="${product.img}" alt="${product.name}" />
+                    <p>${product.name}</p>
+                    <p>${formatNumber(product.price)}원</p>
+                    <a href="/product/${product.id}">상세보기</a>
+                `;
+                sliderContainer.appendChild(sliderItem);
+            });
+
+            let currentIndex = 0;
+            const itemsPerPage = 5;
+            const totalSlides = Math.ceil(recommendList.length / itemsPerPage);
+
+            function updateSlider() {
+                sliderContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+            }
+
+            window.moveSlide = function(step) {
+                currentIndex = (currentIndex + step + totalSlides) % totalSlides;
+                updateSlider();
+            }
+
+            document.querySelector('.prev').addEventListener('click', function() {
+                moveSlide(-1);
+            });
+
+            document.querySelector('.next').addEventListener('click', function() {
+                moveSlide(1);
+            });
+
         });
     </script>
 </th:block>
