@@ -1,7 +1,6 @@
 package com.crawl.Crawling.controller;
 
 import com.crawl.Crawling.dto.LikeRequestDto;
-import com.crawl.Crawling.dto.ProductSearchDto;
 import com.crawl.Crawling.entity.Likes;
 import com.crawl.Crawling.entity.Product;
 import com.crawl.Crawling.entity.User;

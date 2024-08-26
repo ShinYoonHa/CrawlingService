@@ -60,7 +60,7 @@ public class ProductService {
         return productRepository.findAll();
     }
     //특정 상품 조회
-    public ProductDto getProduct(Long item_id) {
+    public ProductDto getProductDto(Long item_id) {
         Product product =  productRepository.findById(item_id)
                 .orElseThrow(() -> new EntityNotFoundException("해당 id를 가진 상품이 없습니다"));
         //Product를 ProductDto로 변환
