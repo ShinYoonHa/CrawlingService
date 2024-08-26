@@ -3,10 +3,7 @@ package com.crawl.Crawling.controller;
 import com.crawl.Crawling.constant.Category;
 import com.crawl.Crawling.dto.ProductDto;
 import com.crawl.Crawling.dto.ProductSearchDto;
-import com.crawl.Crawling.entity.Likes;
-import com.crawl.Crawling.entity.PriceHistory;
-import com.crawl.Crawling.entity.Product;
-import com.crawl.Crawling.entity.User;
+import com.crawl.Crawling.entity.*;
 import com.crawl.Crawling.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,6 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -33,16 +32,24 @@ public class ProductController {
     //카테고리별 상품 목록
     @GetMapping(value = {"/category={category}/page={page}", "/category={category}"})
     public String productList(ProductSearchDto productSearchDto, Model model,
-                               @PathVariable("category") String category, @PathVariable("page") Optional<Integer> page) {
+                               @PathVariable("category") String category, @PathVariable("page") Optional<Integer> page,
+                              Principal principal) {
         //page.isPresent() 값 있으면 page.get(), 없으면 0 반환. 페이지 당 사이즈 60개
         productSearchDto.setSearchCategory(category);
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 60);
         Page<Product> products = productService.getCategoryPage(productSearchDto, pageable);
 
+        List<RecentView> recentViewList = new ArrayList<>();
+        if(principal != null) { //로그인 상태이면
+            User user = userService.findByEmail(principal.getName());
+            recentViewList = recentViewService.findAllByUser(user); //사용자가 최근 조회한 상품 리스트
+        }
+
         model.addAttribute("categoryList", Category.values());
         model.addAttribute("products", products);
         model.addAttribute("productSearchDto", productSearchDto);
         model.addAttribute("maxPage", 10);
+        model.addAttribute("recentViewList", recentViewList);
 
         return "product/productList"; //카테고리 상품 메인 페이지로 이동
     }
