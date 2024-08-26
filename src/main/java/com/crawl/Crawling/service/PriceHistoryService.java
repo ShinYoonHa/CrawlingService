@@ -35,5 +35,13 @@ public class PriceHistoryService {
     public List<PriceHistory> getAllPriceHistories() {
         return priceHistoryRepository.findAll();
     }
+    //상품의 최고가 조회. 가격 내림차순 정렬 후 첫 번째 값
+    public PriceHistory findMaxPriceByProduct(Product product) {
+        return priceHistoryRepository.findTopByProductOrderByPriceDesc(product);
+    }
+    //상품의 최저가 조회. 가격 오름차순 정렬 후 첫 번째 값
+    public PriceHistory findMinPriceByProduct(Product product) {
+        return priceHistoryRepository.findTopByProductOrderByPriceAsc(product);
+    }
 
 }

@@ -4,12 +4,10 @@ import com.crawl.Crawling.constant.Category;
 import com.crawl.Crawling.dto.ProductDto;
 import com.crawl.Crawling.dto.ProductSearchDto;
 import com.crawl.Crawling.entity.Likes;
+import com.crawl.Crawling.entity.PriceHistory;
 import com.crawl.Crawling.entity.Product;
 import com.crawl.Crawling.entity.User;
-import com.crawl.Crawling.service.LikesService;
-import com.crawl.Crawling.service.ProductService;
-import com.crawl.Crawling.service.RecentViewService;
-import com.crawl.Crawling.service.UserService;
+import com.crawl.Crawling.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,7 +28,9 @@ public class ProductController {
     private final LikesService likesService;
     private final UserService userService;
     private final RecentViewService recentViewService;
+    private final PriceHistoryService priceHistoryService;
 
+    //카테고리별 상품 목록
     @GetMapping(value = {"/category={category}/page={page}", "/category={category}"})
     public String productList(ProductSearchDto productSearchDto, Model model,
                                @PathVariable("category") String category, @PathVariable("page") Optional<Integer> page) {
@@ -47,10 +47,14 @@ public class ProductController {
         return "product/productList"; //카테고리 상품 메인 페이지로 이동
     }
 
+    //상품 상세 페이지
     @GetMapping(value = "/product/{productId}")
     public String productDetail(@PathVariable("productId") Long id, Model model, Principal principal) {
-        ProductDto productDto = productService.getProduct(id);
+        ProductDto productDto = productService.getProductDto(id);
         boolean isLoggedIn = (principal != null); // 로그인 여부 확인
+        PriceHistory maxPriceHistory = priceHistoryService.findMaxPriceByProduct(productService.findById(id));
+        PriceHistory minPriceHistory = priceHistoryService.findMinPriceByProduct(productService.findById(id));
+
 
         if(isLoggedIn) { //로그인된 사용자가 있을 경우
             User user = userService.findByEmail(principal.getName());
@@ -62,7 +66,8 @@ public class ProductController {
         } else {
             model.addAttribute("isLiked", false);
         }
-
+        model.addAttribute("maxPrice", maxPriceHistory.getPrice());
+        model.addAttribute("minPrice", minPriceHistory.getPrice());
         model.addAttribute("productDto", productDto);
         model.addAttribute("isLoggedIn", isLoggedIn); // 로그인 여부 추가
 

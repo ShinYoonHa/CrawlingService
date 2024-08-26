@@ -45,8 +45,8 @@
                     <button type="button" class="goto-btn"
                             th:onclick="'location.href=\'https://www.coupang.com/vp/products/\' + ' + ${productDto.id}">사러가기</button>
                 </div>
-                <p>역대최고가 <strong class="highest-price"><span id="highestPrice" th:text="${productDto.price}">0</span>원</strong></p>
-                <p>역대최저가 <strong class="lowest-price"><span id="lowestPrice" th:text="${productDto.price}">0</span>원</strong></p>
+                <p>역대최고가 <strong class="highest-price"><span id="highestPrice" th:text="${maxPrice}">0</span>원</strong></p>
+                <p>역대최저가 <strong class="lowest-price"><span id="lowestPrice" th:text="${minPrice}">0</span>원</strong></p>
 
                 <!-- 알림 받기 -->
                 <div class="notification-container">
