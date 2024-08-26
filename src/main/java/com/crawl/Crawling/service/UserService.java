@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,13 +15,31 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public User saveUser(User user) {
         checkDuplicateUser(user); //@Transactional 이기에 예외시 작동 안함
         return userRepository.save(user); //db에 저장
     }
-    public User findByNameAndTel(String name, String tel) {
-        return userRepository.findByNameAndTel(name, tel);
+    public User updateUser(User user, String newPw) {
+        user.setPassword(passwordEncoder.encode(newPw));
+        return userRepository.save(user);
+    }
+    public User findByNameAndTelAndPw(String name, String tel, String pw) {
+        User user = userRepository.findByNameAndTel(name, tel);
+
+        if (user != null && passwordEncoder.matches(pw, user.getPassword())) {
+            return user;
+        }
+        return null;
+    }
+    public User findByEmailAndNameAndTel(String email, String name, String tel) {
+        User user = userRepository.findByEmailAndNameAndTel(email, name, tel);
+
+        if(user != null) {
+            return user;
+        }
+        return null;
     }
     public User findByEmail(String email) {
         return userRepository.findByEmail(email);

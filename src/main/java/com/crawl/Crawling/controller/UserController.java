@@ -25,6 +25,8 @@ public class UserController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
+    public static final int SIGNUP = 3;
+    public static final int RESET_PW = 2;
 
     String confirm = ""; //이메일 인증 시 보낼 코드
     boolean confirmCheck = false; //이메일 인증 코드 일치하는지 체크
@@ -33,7 +35,6 @@ public class UserController {
     public String signup(Model model) {
         confirmCheck = false; //회원가입화면 렌더링 시 코드 확인 여부 초기화
         model.addAttribute("userDto", new UserDto());
-        System.out.println("confirmCheck = " + confirmCheck);
         return "user/signupForm";
     }
     @PostMapping(value = "/signup")
@@ -60,7 +61,7 @@ public class UserController {
     @PostMapping(value = "/mailSend/{email}")
     @ResponseBody
     public ResponseEntity emailConfirm(@PathVariable("email") String email) throws Exception{
-        confirm = mailService.sendSimpleMessage(email);
+        confirm = mailService.sendSimpleMessage(email, SIGNUP);
         return new ResponseEntity<String>("인증 메일을 보냈습니다.", HttpStatus.OK); //ajax로 전송
     }
 
@@ -94,8 +95,9 @@ public class UserController {
     public ResponseEntity<Map<String, String>> findEmail(@RequestBody Map<String, String> req) {
         String name = req.get("name");
         String tel = req.get("tel");
+        String pw = req.get("pw");
 
-        User user = userService.findByNameAndTel(name, tel);
+        User user = userService.findByNameAndTelAndPw(name, tel, pw);
 
         Map<String, String> res = new HashMap<>();
         if (user != null) {
@@ -103,6 +105,28 @@ public class UserController {
             return ResponseEntity.ok(res); // 200 OK
         } else {
             res.put("message", "해당 정보로 가입된 사용자를 찾을 수 없습니다");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res); // 404 Not Found
+        }
+    }
+
+    @GetMapping(value = "/reset-password")
+    public String resetPassword() {
+        return "user/resetPassword";
+    }
+    @PostMapping(value = "/reset-password")
+    public ResponseEntity<Map<String, String>> resetPassword(@RequestBody Map<String, String> req) throws Exception {
+        String email = req.get("email");
+        String name = req.get("name");
+        String tel = req.get("tel");
+
+        User user = userService.findByEmailAndNameAndTel(email, name, tel);
+        Map<String, String> res = new HashMap<>();
+        if(user != null) {
+            String newPw = mailService.sendSimpleMessage(email, RESET_PW);
+            userService.updateUser(user, newPw);
+            return ResponseEntity.ok(res); // 200 OK
+        } else {
+            res.put("message", "임시 비밀번호 설정에 오류가 발생했습니다");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res); // 404 Not Found
         }
     }
