@@ -10,6 +10,7 @@
     <title>회원가입 - ShowMate</title>
     <link rel="stylesheet" th:href="@{/css/signupForm.css}" />
     <link rel="stylesheet" th:href="@{https://cdn-uicons.flaticon.com/2.5.1/uicons-bold-rounded/css/uicons-bold-rounded.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <div layout:fragment="content" class="container d-flex flex-column align-items-center min-vh-100">
@@ -28,7 +29,7 @@
             <div class="input-container code-button">
                 <input type="email" id="email" name="email" placeholder=" " required>
                 <label for="email">이메일</label>
-                <button class="btn" type="button" onclick="sendVerificationCode()">인증코드 발송</button>
+                <button class="btn" type="button" onclick="mailSend()">인증코드 발송</button>
                 <span class="clear-text email-clear-text" onclick="clearInput('email')">
                     <i class="fi fi-br-cross"></i>
                 </span>
@@ -38,7 +39,7 @@
             <div class="input-container code-button">
                 <input type="text" id="email-verification" name="email-verification" placeholder=" " required>
                 <label for="email-verification">인증코드 확인</label>
-                <button class="btn" type="button" onclick="verifyCode()">인증코드 확인</button>
+                <button class="btn" type="button" onclick="codeCheck()">인증코드 확인</button>
                 <span class="clear-text email-clear-text" onclick="clearInput('email-verification')">
                     <i class="fi fi-br-cross"></i>
                 </span>
@@ -101,7 +102,15 @@
 </div>
 
 <th:block layout:fragment="script">
-    <script>
+    <script th:inline="javascript">
+    $(document).ready(function(){
+        var errorMessage = [[${errorMessage}]];
+        if(errorMessage != null){
+            alert(errorMessage);
+        }
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+
         //입력 값 유무에 따라 비밀번호 토글버튼 표시/숨기기
         document.querySelectorAll('.input-password input').forEach(input => {
             input.addEventListener('input', function() {
@@ -148,16 +157,6 @@
             inputField.focus();
         }
 
-        // 인증코드 발송
-        function sendVerificationCode() {
-            alert('인증코드 전송완료');
-        }
-
-        // 인증코드 확인
-        function verifyCode() {
-            alert('인증코드가 확인되었습니다.');
-        }
-
         // 비밀번호 확인
         document.getElementById('confirm-password').addEventListener('input', function() {
             const password = document.getElementById('password').value;
@@ -172,7 +171,70 @@
                 errorElement.style.display = 'none';
             }
         });
+        window.mailSend = function() {
+            var mail = $("#email").val();
 
+            var url = "/user/mailSend/" + mail;
+            var paramData = {
+                email: mail
+            };
+            /*JSON 형식으로 변경*/
+            var param = JSON.stringify(paramData);
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                contentType: "application/json",
+                data: param,
+                beforeSend: function (xhr) {
+                    /*데이터 전송하기 전 헤더에 csrf 값을 설정*/
+                    xhr.setRequestHeader(header, token);
+                },
+                dataType: "json",
+                cache: false,
+                success: function (result, status) {
+                    alert(result);
+                },
+                error: function (jqXHR, status, error) {
+                    if (jqXHR.status == "401") {
+                        alert("로그인 후 이용해주세요.");
+                        location.href = "/members/login";
+                    } else {
+                        alert(jqXHR.responseText);
+                    }
+                },
+            });
+        }
+
+        window.codeCheck = function() {
+            var code = $("#email-verification").val();
+
+            var url = "/user/codeCheck/" + code;
+            var paramData = {
+                code: code
+            };
+            /*JSON 형식으로 변경*/
+            var param = JSON.stringify(paramData);
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                contentType: "application/json",
+                data: param,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(header, token);
+                },
+                dataType: "json",
+                cache: false,
+                success: function (result, status) {
+                    alert(result);
+                },
+                error: function (jqXHR, status, error) {
+                    alert(jqXHR.responseText);
+                },
+            });
+        }
+    });
     </script>
 </th:block>
 

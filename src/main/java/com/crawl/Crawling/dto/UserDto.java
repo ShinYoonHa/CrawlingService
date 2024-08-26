@@ -1,5 +1,6 @@
 package com.crawl.Crawling.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,7 @@ public class UserDto {
     private String name;
 
     @NotBlank(message = "이메일은 필수 입력 값입니다.")
+    @Email //이메일 인증 여부를 Validation으로 확인함
     private String email;
 
     @NotBlank(message = "비밀번호는 필수 입력 값입니다.")

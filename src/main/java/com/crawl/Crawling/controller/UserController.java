@@ -2,8 +2,7 @@ package com.crawl.Crawling.controller;
 
 import com.crawl.Crawling.dto.UserDto;
 import com.crawl.Crawling.entity.User;
-import com.crawl.Crawling.service.LikesService;
-import com.crawl.Crawling.service.ProductService;
+import com.crawl.Crawling.service.MailService;
 import com.crawl.Crawling.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,15 +24,16 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
-    private final LikesService likesService;
-    private final ProductService productService;
+    private final MailService mailService;
 
-//    String confirm = ""; //이메일 인증 시 보낼 코드
-//    boolean confirmCheck = false; //이메일 인증 코드 일치하는지 체크
+    String confirm = ""; //이메일 인증 시 보낼 코드
+    boolean confirmCheck = false; //이메일 인증 코드 일치하는지 체크
 
     @GetMapping(value = "/signup")
     public String signup(Model model) {
+        confirmCheck = false; //회원가입화면 렌더링 시 코드 확인 여부 초기화
         model.addAttribute("userDto", new UserDto());
+        System.out.println("confirmCheck = " + confirmCheck);
         return "user/signupForm";
     }
     @PostMapping(value = "/signup")
@@ -42,10 +42,10 @@ public class UserController {
         if(bindingResult.hasErrors()) { //다시 회원가입 화면으로
             return "user/signupForm";
         }
-//        if(!confirmCheck) { //이메일 인증 되지 않았을 경우
-//            model.addAttribute("errorMessage", "이메일을 인증 해주세요");
-//            return "user/signupForm";
-//        }
+        if(!confirmCheck) { //이메일 인증 되지 않았을 경우
+            model.addAttribute("errorMessage", "이메일을 인증 해주세요");
+            return "user/signupForm";
+        }
         try {
             //User객체 생성
             User user = User.createUser(userDto, passwordEncoder);
@@ -55,6 +55,24 @@ public class UserController {
             return "user/signupForm";
         }
         return "redirect:/";
+    }
+
+    @PostMapping(value = "/mailSend/{email}")
+    @ResponseBody
+    public ResponseEntity emailConfirm(@PathVariable("email") String email) throws Exception{
+        confirm = mailService.sendSimpleMessage(email);
+        return new ResponseEntity<String>("인증 메일을 보냈습니다.", HttpStatus.OK); //ajax로 전송
+    }
+
+    @PostMapping(value = "/codeCheck/{code}")
+    @ResponseBody
+    public ResponseEntity codeConfirm(@PathVariable("code") String code) throws Exception {
+        if(confirm.equals(code)) { //보낸 인증코드와 입력된 인증코드가 일치하는지
+            confirmCheck = true;
+            return new ResponseEntity<String>("인증 성공했습니다.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<String>("인증 코드를 올바르게 입력해주세요.", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping(value = "/login")
