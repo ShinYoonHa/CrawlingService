@@ -50,7 +50,8 @@
 
                 <!-- 알림 받기 -->
                 <div class="notification-container">
-                    <input type="number" placeholder="가격을 입력하세요" class="notification-input"/>
+                    <label for="alarmPrice">지정가</label>
+                    <input id="alarmPrice" type="number" placeholder="가격을 입력하세요" class="notification-input"/>
                     <button class="notification-button">알림 받기</button>
                 </div>
             </div>
@@ -118,8 +119,9 @@
             // 공유하기 버튼 기능 (간단히 알림으로 처리)
             const shareButton = document.getElementById('shareButton');
             shareButton.addEventListener('click', function() {
-                alert('공유하기 기능이 클릭되었습니다!');
-                // 실제 공유 기능은 이곳에 추가
+                alert('상품 링크가 복사되었습니다!');
+                var url = "https://www.coupang.com/vp/products/"+[[${productDto.id}]]
+                navigator.clipboard.writeText(url);
             });
 
             // 숫자 포맷팅 함수
