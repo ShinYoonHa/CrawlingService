@@ -28,9 +28,9 @@ public class RecentViewController {
         User user = userService.findByEmail(username); // UserService에서 사용자 정보를 가져오는 메서드
         //사용자 객체로 해당 사용자와 관련된 RecentView 객체들을 찾아옴
         List<RecentView> recentViewList = recentViewService.findAllByUser(user);
-        List<Product> recentViewProducts = new ArrayList<>(); //좋아요한 상품 리스트
+        List<Product> recentViewProducts = new ArrayList<>(); //최근 본 상품 리스트
 
-        for(RecentView recentView : recentViewList) { //likeList에 저장된 Likes에서 productId 로 상품 검색 후 List에 저장
+        for(RecentView recentView : recentViewList) { //recentViewList에서 productId 로 상품 검색 후 List에 저장
             Product product = productService.findById(recentView.getProduct().getId());
             recentViewProducts.add(product);
         }
