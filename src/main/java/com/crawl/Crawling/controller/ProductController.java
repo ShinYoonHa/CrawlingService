@@ -29,6 +29,7 @@ public class ProductController {
     private final RecentViewService recentViewService;
     private final PriceHistoryService priceHistoryService;
     private final RecommendService recommendService;
+    private final NoticeService noticeService;
 
     //카테고리별 상품 목록
     @GetMapping(value = {"/category={category}/page={page}", "/category={category}"})
@@ -68,12 +69,13 @@ public class ProductController {
             User user = userService.findByEmail(principal.getName());
             Product product = productService.findById(id);
             Likes likes = likesService.findByUserAndProduct(user, product); //좋아요 이력 있는지 확인
-
+            Notice notice = noticeService.findByUserAndProduct(user, product); //알림 설정 이력 존재 확인
             //좋아요 목록, 최근 조회 목록 기반으로 추천리스트 작성
             List<ProductDto> recommedList = recommendService.recommendProduct(user);
 
             recentViewService.addRecentView(user, product); //사용자와 상품으로 최근본 상품에 등록
             model.addAttribute("isLiked", likes != null);
+            model.addAttribute("isNoticed", notice != null);
             model.addAttribute("recommendList", recommedList);
         } else {
             model.addAttribute("isLiked", false);

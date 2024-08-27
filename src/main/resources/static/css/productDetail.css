@@ -111,6 +111,15 @@ a {
     background-color: #0056b3;
 }
 
+.noticed {
+    background-color: #dc3545;
+}
+
+.noticed:hover {
+    background-color: #b52a34;
+}
+
+
 .notification-button label {
     font-size: 14px;
 }

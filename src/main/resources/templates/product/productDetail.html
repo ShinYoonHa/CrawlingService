@@ -51,7 +51,7 @@
                 <div class="notification-container">
                     <label for="alarmPrice">지정가</label>
                     <input id="alarmPrice" type="number" placeholder="가격을 입력하세요" class="notification-input"/>
-                    <button class="notification-button">알림 받기</button>
+                    <button id="noticeButton" class="notification-button">알림 설정</button>
                 </div>
             </div>
         </div>
@@ -80,9 +80,10 @@
 <th:block layout:fragment="script">
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function() {
-            let liked = [[${isLiked}]]; // 기본값은 Controller에서 보내준 isLiked 값
             const token = $("meta[name='_csrf']").attr("content");
             const header = $("meta[name='_csrf_header']").attr("content");
+
+            let liked = [[${isLiked}]]; // 기본값은 Controller에서 보내준 isLiked 값
 
             const likeButton = document.getElementById('likeButton');
             const likeIcon = document.getElementById('likeIcon');
@@ -115,6 +116,60 @@
                         },
                         success: (res) => {
                             if (res.message) { // 좋아요 등록 할 때만 뜨게
+                                alert(res.message);
+                            }
+                        },
+                        error: (xhr, status, error) => {
+                            console.log("Like Error: ", status, error);
+                        }
+                    });
+                } else {
+                    alert("로그인이 필요한 서비스입니다.");
+                    const currentUrl = window.location.href;
+                    location.href = "/user/login?redirect=" + encodeURIComponent(currentUrl);
+                }
+            });
+
+            //지정가 알림 설정
+            let noticed = [[${isNoticed}]]; // 기본값은 Controller에서 보내준 isNoticed 값
+            // 사용자 입력 값을 올바르게 읽어와서 처리
+            const noticeButton = document.getElementById('noticeButton');
+
+            // 좋아요 상태에 따라 아이콘 변경
+            function updateNotice(isNotice) {
+                if (isNotice) {
+                    noticeButton.classList.add('noticed');
+                    noticeButton.textContent = '알림 취소';
+                } else {
+                    noticeButton.classList.remove('noticed');
+                    noticeButton.textContent = '알림 설정';
+                }
+            }
+            updateNotice(noticed); // notice 버튼 초기화
+
+            noticeButton.addEventListener('click', function() {
+                if (isLoggedIn === 'true') {
+                    let alarmPriceValue = $("#alarmPrice").val();
+                    noticed = !noticed; // 상태 토글
+                    updateNotice(noticed); // 아이콘 업데이트
+
+                    const paramData = {
+                        productId: [[${productDto.id}]],
+                        noticed: noticed,
+                        price: alarmPriceValue,
+                    };
+
+                    $.ajax({
+                        url: "/notice",
+                        method: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(paramData),
+                        dataType: "json",
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader(header, token);
+                        },
+                        success: (res) => {
+                            if (res.message) { //알림 등록/취소 성공 시 문구 alert
                                 alert(res.message);
                             }
                         },

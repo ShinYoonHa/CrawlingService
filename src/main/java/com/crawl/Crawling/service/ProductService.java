@@ -8,12 +8,14 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 //@Transactional
@@ -70,34 +72,57 @@ public class ProductService {
         return productRepository.findById(id).get();
     }
 
-    //저장된 모든 상품에 대한 정보 업데이트
+//    //저장된 모든 상품에 대한 정보 업데이트
+//    public void updateAllProduct() throws IOException {
+//        List<Product> products = getAllProducts(); //db에 저장된 모든 상품 조회
+//        System.out.println("업데이트 할 전체상품 개수: " + products.size());
+//
+//        for(Product product : products) {
+//            //모든 상품에 대해 정보 업데이트 (가격, 평점, 평점 개수)
+//            Product findProduct = productRepository.findById(product.getId()).orElse(null);
+//            //Product 정보를 dto에 채움.
+//            ProductDto productDto = ProductDto.of(findProduct);
+//            //정보를 직접 변경하기에 dto에 정보 넣고, dto를 통해 entity에 최신 값 갱신
+//            if(crawlingService.crawlLatestProductStatus(productDto) == null) {
+//                continue; //기존 db에 있었으나, 현재 상세정보가 없어진 상품인 경우 넘어감
+//            }
+//
+//            findProduct.setPrice(productDto.getPrice());
+//            findProduct.setRate(productDto.getRate());
+//            findProduct.setRate_count(productDto.getRate_count());
+//            //영속성 컨텍스트에서 관리되지만 db에 변경사항을 저장 및 추가 시 명시적으로 save 실행.
+//            productRepository.save(findProduct);
+//
+//            //가격 이력 갱신
+//            priceHistoryService.savePriceHistory(findProduct);
+//        }
+//    }
     public void updateAllProduct() throws IOException {
-        List<Product> products = getAllProducts(); //db에 저장된 모든 상품 조회
+        List<Product> products = getAllProducts();
         System.out.println("업데이트 할 전체상품 개수: " + products.size());
 
-        for(Product product : products) {
-            //모든 상품에 대해 정보 업데이트 (가격, 평점, 평점 개수)
-            Product findProduct = productRepository.findById(product.getId()).orElse(null);
-            //Product 정보를 dto에 채움.
-            ProductDto productDto = ProductDto.of(findProduct);
-            //정보를 직접 변경하기에 dto에 정보 넣고, dto를 통해 entity에 최신 값 갱신
-            if(crawlingService.crawlLatestProductStatus(productDto) == null) {
-                continue; //기존 db에 있었으나, 현재 상세정보가 없어진 상품인 경우 넘어감
-            }
-
-            findProduct.setPrice(productDto.getPrice());
-            findProduct.setRate(productDto.getRate());
-            findProduct.setRate_count(productDto.getRate_count());
-            //영속성 컨텍스트에서 관리되지만 db에 변경사항을 저장 및 추가 시 명시적으로 save 실행.
-            productRepository.save(findProduct);
-
-            //가격 이력 갱신
-            priceHistoryService.savePriceHistory(findProduct);
+        for (Product product : products) {
+            updateProductInfoAsync(product);
         }
     }
-
     @Transactional(readOnly = true) //조회용 쿼리임을 명시
     public Page<Product> getCategoryPage(ProductSearchDto productSearchDto, Pageable pageable) {
         return productRepository.getCategoryPage(productSearchDto, pageable);
+    }
+    @Async // 비동기 처리 어노테이션
+    public CompletableFuture<Void> updateProductInfoAsync(Product product) throws IOException {
+        Product findProduct = productRepository.findById(product.getId()).orElse(null);
+        if (findProduct != null) {
+            ProductDto productDto = ProductDto.of(findProduct);
+            if (crawlingService.crawlLatestProductStatus(productDto) == null) {
+                return CompletableFuture.completedFuture(null);
+            }
+            findProduct.setPrice(productDto.getPrice());
+            findProduct.setRate(productDto.getRate());
+            findProduct.setRate_count(productDto.getRate_count());
+            productRepository.save(findProduct);
+            priceHistoryService.savePriceHistory(findProduct);
+        }
+        return CompletableFuture.completedFuture(null);
     }
 }

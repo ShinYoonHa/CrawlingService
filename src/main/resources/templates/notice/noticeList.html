@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <title>알림 목록 - ShowMate</title>
+    <link rel="stylesheet" th:href="@{/css/noticeList.css}" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="title-container">
+        <h3>알림 목록</h3>
+        <p class="totalCount text-danger" th:text="'총 알림 건수: ' + ${products.size()}"></p>
+    </div>
+    <div class="action-bar">
+        <div class="action-bar-left">
+            <label for="selectAll" class="select-all-label">
+                <input type="checkbox" id="selectAll"> 전체선택
+            </label>
+            <button id="deleteSelected" class="btn btn-danger">선택삭제</button>
+        </div>
+    </div>
+    <form role="form" method="get" th:object="${products}">
+        <div class="custom-container">
+            <div class="notice-list">
+                <th:block th:each="map : ${products}">
+                    <div class="notice-item">
+                        <!-- 체크박스와 삭제 버튼 추가 -->
+                        <input type="checkbox" class="product-checkbox" th:value="${map['product'].id}">
+                        <div class="product-info">
+                            <img th:src="${map['product'].img}" class="product-img" th:alt="${map['product'].name}">
+                            <div class="product-details">
+                                <div class="product-name">
+                                    <h6 th:text="${map['product'].name}">상품명</h6>
+                                </div>
+                                <div class="product-price">알림 가격
+                                    <p th:text="${map['noticePrice']} + '원'">알림 가격</p>
+                                </div>
+                                <button class="btn btn-danger delete-item" th:data-id="${map['product'].id}">삭제</button>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            const token = $("meta[name='_csrf']").attr("content");
+            const header = $("meta[name='_csrf_header']").attr("content");
+            // 선택상품 삭제 버튼 클릭 이벤트 핸들러
+            $('#deleteSelected').on('click', function() {
+                const selectedProductIds = [];
+                $('.product-checkbox:checked').each(function() {
+                    selectedProductIds.push($(this).val());
+                });
+
+                if (selectedProductIds.length > 0) {
+                    $.ajax({
+                        url: '/notice/remove',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(selectedProductIds),
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader(header, token);
+                        },
+                        success: function(res) {
+                            alert('선택한 상품이 삭제되었습니다.');
+                            location.reload(); // 페이지 새로고침
+                        },
+                        error: function(xhr, status, error) {
+                            console.log('Notice Remove Error: ', status, error);
+                        }
+                    });
+                } else {
+                    alert('삭제할 상품을 선택하세요.');
+                }
+            });
+
+            // 전체 선택 체크박스 클릭 이벤트 핸들러
+            $('#selectAll').on('change', function() {
+                const isChecked = $(this).is(':checked');
+                $('.product-checkbox').prop('checked', isChecked);
+            });
+
+            // 개별 삭제 버튼 클릭 이벤트 핸들러
+            $('.delete-item').on('click', function() {
+                const id = $(this).data('id');
+                $.ajax({
+                    url: '/notice/remove/' + id,
+                    method: 'POST',
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader(header, token);
+                    },
+                    success: function(res) {
+                        alert('상품이 삭제되었습니다.');
+                        location.reload(); // 페이지 새로고침
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Notice Remove Error: ', status, error);
+                    }
+                });
+            });
+
+            // 가격 포맷팅 함수
+            function formatNumber(number) {
+                return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
+            // 가격 포맷팅
+            $(".notice-price").each(function() {
+                var priceText = $(this).text();
+                var price = priceText.replace(/[^0-9]/g, ''); // 숫자만 추출
+                $(this).text(priceText.replace(price, formatNumber(parseInt(price, 10))));
+            });
+        });
+    </script>
+</th:block>
+</body>
+</html>

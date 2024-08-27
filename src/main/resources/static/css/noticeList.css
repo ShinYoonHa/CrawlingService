@@ -1,0 +1,149 @@
+/* 기본 링크 스타일 초기화 */
+a {
+    text-decoration: none;
+}
+
+.totalCount,
+.searchResult {
+    text-align: center;
+}
+
+/* action-bar 스타일 */
+.action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 1090px;
+    margin: 0 auto;
+    padding: 5px;
+    background-color: #fafafa;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+.action-bar-left {
+    display: flex;
+    align-items: center;
+}
+
+#selectAll {
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-right: 5px; /* 체크박스와 텍스트 사이의 간격 설정 */
+}
+.select-all-label {
+    display: flex;
+    align-items: center; /* 수직 가운데 정렬 */
+    margin: 0 10px; /* 버튼과 체크박스 사이의 간격 설정 */
+}
+
+.totalCount {
+    margin: 0;
+    font-size: 1rem; /* 총 검색 건수 크기 */
+    color: #ff0000; /* 총 검색 건수 색상 */
+}
+
+/* 검색 컨테이너 */
+.search-container {
+    width: 1100px;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    margin: 10px auto;
+}
+
+/* 전체 컨테이너 */
+.custom-container {
+    display: flex;
+    width: 1100px;
+    margin: 0 auto;
+}
+
+hr {
+    width: 1090px; /* card-container와 같은 너비 */
+    margin: 5px auto; /* 가운데 정렬 */
+    border: 1px solid #9a9a9a;
+}
+
+/* 제목 컨테이너 */
+.title-container {
+    display: flex;
+    align-items: baseline;
+    width: 1100px; /* 너비를 전체 레이아웃에 맞춤 */
+    margin: 0 auto;
+    margin-bottom: 10px;
+}
+
+.title-container h3 {
+    color: #7048cd; /* 제목 색상 */
+    border: 0;
+    margin: 0 10px;
+    font-weight: bold;
+}
+
+/* 카드 컨테이너 */
+.notice-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* 카드 스타일 */
+.notice-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ccc; /* 하단에 구분선 추가 */
+    position: relative;
+}
+
+.product-checkbox {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+.product-info {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding-left: 40px; /* 이미지 오른쪽으로 공간 만들기 */
+}
+
+.product-img {
+    width: 120px; /* 이미지 크기 조정 */
+    height: 120px; /* 이미지 크기 조정 */
+    margin-right: 20px; /* 이미지와 텍스트 사이의 간격 */
+}
+
+.product-name {
+    width: 70%
+}
+.product-price {
+    font-size: 1rem;
+}
+.product-price p {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.product-details {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+
+.notice-price {
+    font-size: 0.9rem;
+}
+
+.delete-item {
+    margin-left: 10px; /* 버튼과 텍스트 사이의 간격 설정 */
+    padding: 4px 8px; /* 버튼 크기 조정 */
+    font-size: 12px; /* 버튼 글자 크기 조정 */
+}
