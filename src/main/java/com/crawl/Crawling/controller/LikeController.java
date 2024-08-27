@@ -1,6 +1,6 @@
 package com.crawl.Crawling.controller;
 
-import com.crawl.Crawling.dto.LikeRequestDto;
+import com.crawl.Crawling.dto.LikeDto;
 import com.crawl.Crawling.entity.Likes;
 import com.crawl.Crawling.entity.Product;
 import com.crawl.Crawling.entity.User;
@@ -25,7 +25,7 @@ public class LikeController {
     private final LikesService likesService;
 
     //마이페이지 내 좋아요 상품목록 리스트
-    @GetMapping("/likeList")
+    @GetMapping(value = "/likeList")
     public String likeList(Principal principal, Model model) {
         String username = principal.getName(); //getName() 시 사용자 이메일이 넘어온다
         User user = userService.findByEmail(username); // UserService에서 사용자 정보를 가져오는 메서드
@@ -42,7 +42,7 @@ public class LikeController {
 
     //상품 상세 페이지에서 좋아요 눌렀을 경우
     @PostMapping(value = "")
-    public ResponseEntity<Map<String, String>> productLike(@RequestBody LikeRequestDto likeRequestDto, Principal principal) {
+    public ResponseEntity<Map<String, String>> productLike(@RequestBody LikeDto likeRequestDto, Principal principal) {
         boolean isLike = likeRequestDto.isLiked(); //ajax로 넘어온 true/false
         User user = userService.findByEmail(principal.getName()); //현재 로그인된 사용자의 아이디
         Product product = productService.findById(likeRequestDto.getProductId());
@@ -56,7 +56,7 @@ public class LikeController {
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/remove")
+    @PostMapping(value = "/remove")
     public ResponseEntity<String> removeLikes(@RequestBody List<Long> productIds, Principal principal) {
         User user = userService.findByEmail(principal.getName()); // 현재 로그인된 사용자의 정보 가져오기
         for (Long productId : productIds) {

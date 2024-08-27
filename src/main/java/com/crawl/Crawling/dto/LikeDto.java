@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class LikeRequestDto {
+public class LikeDto {
     private Long productId;
     private boolean liked;
 }
