@@ -19,14 +19,14 @@ public class RecentViewService {
     private RecentViewRepository recentViewRepository;
 
     public List<RecentView> findAllByUser(User user) {
-        return recentViewRepository.findAllByUser(user);
+        return recentViewRepository.findAllByUserOrderByViewDateDesc(user); // 수정된 부분
     }
 
     public void addRecentView(User user, Product product) {
         //기존의 RecentView 존재하는지 확인
         RecentView existingView = recentViewRepository.findByUserAndProduct(user, product);
         if (existingView == null) { //기존에 없을 때만 추가
-            List<RecentView> recentViews = recentViewRepository.findAllByUser(user);
+            List<RecentView> recentViews = recentViewRepository.findAllByUserOrderByViewDateDesc(user);
             
             //최대 크기 넘어가면 가장 오래된 RecentView 부터 삭제
             if(recentViews.size() >= MAX_RECENT_VIEWS) {

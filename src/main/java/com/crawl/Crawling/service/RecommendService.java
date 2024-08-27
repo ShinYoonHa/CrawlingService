@@ -25,7 +25,7 @@ public class RecommendService {
 
     public List<ProductDto> recommendProduct(User user) {
         // 사용자 최근 본 상품 및 좋아요 목록 조회
-        List<Product> recentViewList = recentViewRepository.findAllByUser(user)
+        List<Product> recentViewList = recentViewRepository.findAllByUserOrderByViewDateDesc(user)
                 .stream()
                 .map(RecentView::getProduct)
                 .collect(Collectors.toList());
