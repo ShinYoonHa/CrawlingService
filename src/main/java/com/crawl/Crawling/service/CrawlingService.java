@@ -51,7 +51,6 @@ public class CrawlingService {
 
         // 가격정보에 ',' 문자 제거 후 정수형 타입으로 변환
         String detail_price_str = doc.select("span.total-price strong").getFirst().text();
-        //상품 가격정보가 없는 경우 취소 (ex. 품절)
 
         //가격
         int detail_price = Integer.parseInt(detail_price_str.replace(",", "")
@@ -60,15 +59,15 @@ public class CrawlingService {
         Double detail_rate = 0.0; //평점
         int detail_rate_count = 0; //평점 개수
         //평점 조회함
-        String rate_str = doc.select("div.js_reviewAverageTotalStarRating").attr("data-rating");
-
+        String rate_str = doc.select("span.rating-star-num").attr("style"); //"90.0%"
         //평점이 없을 경우(null), 평점과 평점개수를 0으로 저장
         if (!rate_str.isEmpty()) {
             //문자열 평점을 실수 타입으로 변환
-            detail_rate = Double.parseDouble(rate_str);
+            rate_str = rate_str.replace("width: ", "").replace("%;", "").trim();
+            detail_rate = Double.parseDouble(rate_str) / 20.0; //10.0은 0.5, 90.0은 4.5와 같이 score 형식으로 변환
             //평점 개수에 괄호 제거 후 정수 타입으로 변환
-            String rate_count_str = doc.select("div.sdp-review__average__total-star__info-count").text();
-            detail_rate_count = Integer.parseInt(rate_count_str.replace(",",""));
+            String rate_count_str = doc.select("span.count").text(); //"4,889개 상품평"
+            detail_rate_count = Integer.parseInt(rate_count_str.replace("개 상품평", "").replace(",",""));
         }
         productDto.setPrice(detail_price);
         productDto.setRate(detail_rate);
@@ -125,7 +124,6 @@ public class CrawlingService {
                 rate_count = Integer.parseInt(rate_count_str.replace("(", "")
                         .replace(")", ""));
             }
-
             Product product = new Product();
             product.setId(id);
             product.setImg(img_src);
@@ -136,9 +134,7 @@ public class CrawlingService {
             product.setCategory(Category.valueOf(category_value.name())); //카테고리의 영문명 저장
 
             products.add(product);
-
         }
     }
-
 
 }
