@@ -21,7 +21,7 @@ public class RecommendService {
     private final RecentViewRepository recentViewRepository;
     private final LikesRepository likesRepository;
     private final ProductRepository productRepository;
-    private final int PRICE_RANGE = 10000;
+    private final int PRICE_RANGE = 30000;
 
     public List<ProductDto> recommendProduct(User user) {
         // 사용자 최근 본 상품 및 좋아요 목록 조회

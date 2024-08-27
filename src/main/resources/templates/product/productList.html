@@ -16,7 +16,7 @@
     <hr>
     <div class="recent-sidebar">
         <button class="scroll-to-top">맨 위로</button>
-        <div class="recent-view-title">최근 본 상품</div>
+        <div class="recent-view-title bg-white">최근 본 상품</div>
         <div class="recent-view-list" sec:authorize="isAuthenticated()">
             <div class="recent-view-items">
                 <th:block th:each="recentView, iterStat : ${recentViewList}">
@@ -30,7 +30,7 @@
                 </th:block>
             </div>
         </div>
-        <p sec:authorize="!isAuthenticated()">로그인 후 이용가능합니다</p>
+        <p class="bg-white" sec:authorize="!isAuthenticated()">로그인 후 이용가능합니다</p>
         <div class="pagination-controls" sec:authorize="isAuthenticated()">
             <button class="scroll-prev"> &lt; </button>
             <button class="scroll-next"> &gt; </button>
@@ -75,7 +75,7 @@
             <ul class="pagination justify-content-center">
                 <li class="page-item" th:classappend="${products.first} ? 'disabled'">
                     <a class="page-link" th:attr="data-page=${products.number - 1}" aria-label="Previous">
-                        <span aria-hidden="true">Previous</span>
+                        <span aria-hidden="true">&lt;</span>
                     </a>
                 </li>
                 <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${products.number eq page-1} ? 'active' : ''">
@@ -83,7 +83,7 @@
                 </li>
                 <li class="page-item" th:classappend="${products.last} ? 'disabled'">
                     <a class="page-link" th:attr="data-page=${products.number + 1}" aria-label="Next">
-                        <span aria-hidden="true">Next</span>
+                        <span aria-hidden="true">&gt;</span>
                     </a>
                 </li>
             </ul>
