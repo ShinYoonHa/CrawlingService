@@ -70,11 +70,6 @@ public class RecommendService {
                 .limit(20)
                 .collect(Collectors.toList());
 
-        // 디버깅 출력
-        System.out.println("추천 항목 크기 : " + recommendList.size());
-        System.out.println("중복 제거한 추천 항목 크기 : " + distinctRecommendList.size());
-        System.out.println("최종 추천 항목 크기 : " + finalRecommendList.size());
-
         // Entity를 DTO로 변환 후 반환
         return finalRecommendList.stream()
                 .map(ProductDto::of)

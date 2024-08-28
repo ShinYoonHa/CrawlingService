@@ -1,8 +1,9 @@
 .title-container {
     display: flex;
-    align-items: center; /* 세로 정렬 */
+    align-items: baseline; /* 세로 정렬 */
     width: 1100px; /* 너비를 card-container와 맞춤 */
     margin: 0 auto; /* 가운데 정렬 */
+    margin-bottom: 10px;
 }
 
 .title-container h3 {
@@ -36,7 +37,7 @@
     justify-content: space-between;
     width: 1090px;
     margin: 0 auto;
-    padding: 2px;
+    padding: 5px;
     background-color: #fafafa;
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
