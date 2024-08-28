@@ -12,26 +12,142 @@
 
 <div layout:fragment="content" class="container d-flex flex-column align-items-center min-vh-100">
     <div class="mypage-container">
-        <!-- 이미지 추가 -->
         <img src="/images/profile_user.png" alt="Profile" class="profile-image" />
 
         <div class="user-info">
             <p><strong><span sec:authentication="name"></span></strong></p>
         </div>
         <div class="action-buttons">
-            <a href="/user/edit" class="btn btn-primary btn-block">회원정보 수정</a>
-            <a href="/user/delete" class="btn btn-danger btn-block" onclick="return confirm('정말로 회원탈퇴를 하시겠습니까?');">회원탈퇴</a>
+            <button  id="editBtn" class="btn btn-primary btn-block" th:if="!${isSocial}">회원정보 수정</button>
+            <button  id="deleteBtn" class="btn btn-danger btn-block">회원탈퇴</button>
             <a href="/like/likeList" class="btn btn-secondary btn-block">찜한 상품</a>
             <a href="/recentView" class="btn btn-info btn-block">최근 본 상품</a>
             <a href="/notice/noticeList" class="btn btn-info btn-block">알림 설정 목록</a>
         </div>
     </div>
+
+    <!-- 비밀번호 확인 모달 -->
+    <div id="passwordModal" class="modal" th:if="!${isSocial}">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h4 class="modal-title">비밀번호 확인</h4>
+            <input type="password" id="password" class="modal-input" placeholder="비밀번호 입력" required>
+            <button id="confirmPasswordBtn" class="btn btn-primary mt-3">확인</button>
+        </div>
+    </div>
 </div>
 
+
 <th:block layout:fragment="script">
-    <script>
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+            var actionUrl = '';
+
+            // Thymeleaf에서 JavaScript로 값 전달
+            var isSocial = /*[[${isSocial}]]*/ false;
+
+            // 모달 열기
+            function openModal(url) {
+                actionUrl = url; // 클릭한 버튼의 URL 저장
+                $('#passwordModal').show();
+            }
+
+            // 모달 닫기
+            function closeModal() {
+                $('#passwordModal').hide();
+            }
+
+            // 버튼 클릭 시 모달 열기
+            $('#editBtn').click(function () {
+                openModal('/user/edit'); // 수정 URL
+            });
+
+            $('#deleteBtn').click(function () {
+                actionUrl = "/user/delete";
+                if (isSocial) {
+                    // 소셜 로그인 사용자는 즉시 삭제
+                    deleteUser().then(function () {
+                        alert("회원정보 삭제 완료");
+                        location.href = '/user/logout';
+                    }).catch(function (error) {
+                        alert('삭제하는 중에 오류가 발생했습니다.');
+                        console.log(error);
+                    });
+                } else {
+                    // 일반 사용자는 비밀번호 확인 모달 열기
+                    openModal('/user/delete');
+                }
+            });
+
+            // 사용자 삭제 요청 함수
+            function deleteUser() {
+                return $.ajax({
+                    type: 'DELETE',
+                    url: actionUrl,
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader(header, token);
+                    }
+                });
+            }
+
+            // 모달 닫기 버튼
+            $('.modal-close').click(function () {
+                closeModal();
+            });
+            //엔터키 누르면 확인
+            $('#password').keydown(function(event) {
+                if (event.key === 'Enter'|| event.keyCode === 13) {
+                    event.preventDefault(); // 기본 Enter 키 동작 방지 (예: 폼 제출)
+                    $('#confirmPasswordBtn').click(); // 확인 버튼 클릭
+                }
+            });
+            // 비밀번호 확인 버튼 클릭 시
+            $('#confirmPasswordBtn').click(function () {
+                const password = $('#password').val();
+                $('#password').val("");
+                if (password) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/user/confirm-password',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ password: password }),
+                        beforeSend: function(xhr) {
+                           xhr.setRequestHeader(header, token);
+                        },
+                        success: function(response) {
+                            if (actionUrl === '/user/delete') {
+                                // 비밀번호 확인 후 사용자 삭제 요청
+                                $.ajax({
+                                    type: 'DELETE',
+                                    url: actionUrl,
+                                    beforeSend: function(xhr) {
+                                        xhr.setRequestHeader(header, token);
+                                    },
+                                    success: function() {
+                                        alert("회원정보 삭제 완료");
+                                        location.href = '/user/logout';
+                                    },
+                                    error: function(xhr, status, error) {
+                                        alert('비밀번호가 일치하지 않습니다.');
+                                        console.log(error);
+                                    }
+                                });
+                            } else {
+                                window.location.href = actionUrl; // 비밀번호 확인 성공 시 해당 페이지로 이동
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            alert('비밀번호가 일치하지 않습니다.');
+                            console.log(error);
+                        }
+                    });
+                } else {
+                    alert('비밀번호를 입력하세요.');
+                }
+            });
+        });
     </script>
 </th:block>
-
-
 </html>

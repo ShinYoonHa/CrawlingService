@@ -1,5 +1,6 @@
 package com.crawl.Crawling.service;
 
+import com.crawl.Crawling.dto.UserDto;
 import com.crawl.Crawling.entity.User;
 import com.crawl.Crawling.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +20,21 @@ public class UserService implements UserDetailsService {
 
     public User saveUser(User user) {
         checkDuplicateUser(user); //@Transactional 이기에 예외시 작동 안함
-        return userRepository.save(user); //db에 저장
+        return userRepository.save(user); //db에 저장. 변경감지 있지만 안전하기 위함.
     }
-    public User updateUser(User user, String newPw) {
+    public User updateUser(UserDto userDto) {
+        User user = userRepository.findByEmail(userDto.getEmail());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.setTel(userDto.getTel());
+        user.setGender(userDto.getGender());
+        return userRepository.save(user); //db에 저장. 변경감지 있지만 안전하기 위함.
+    }
+    public User updateUserPassword(User user, String newPw) {
         user.setPassword(passwordEncoder.encode(newPw));
-        return userRepository.save(user);
+        return userRepository.save(user); //db에 저장. 변경감지 있지만 안전하기 위함.
+    }
+    public void deleteUser(String email) {
+        userRepository.delete(findByEmail(email));
     }
     public User findByNameAndTelAndPw(String name, String tel, String pw) {
         User user = userRepository.findByNameAndTel(name, tel);
@@ -57,6 +68,10 @@ public class UserService implements UserDetailsService {
             throw new IllegalStateException("이미 가입된 휴대폰 번호입니다."); //예외발생!
         }
     }
+    public boolean checkPassword(User user, String password) {
+        return passwordEncoder.matches(password, user.getPassword());
+    }
+
 
     //UserDetails - 스프링 시큐리티에서 회원의 정보를 담기 위해서 사용하는 인터페이스
     @Override
