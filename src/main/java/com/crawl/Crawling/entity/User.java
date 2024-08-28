@@ -1,10 +1,13 @@
 package com.crawl.Crawling.entity;
 
 import com.crawl.Crawling.constant.Role;
+import com.crawl.Crawling.constant.Social;
 import com.crawl.Crawling.dto.UserDto;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
@@ -12,6 +15,8 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@ToString
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +31,9 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Enumerated(EnumType.STRING)
+    private Social social;
 
     //연관관계 매핑
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
@@ -44,6 +52,7 @@ public class User {
         user.setTel(userDto.getTel());
         user.setGender(userDto.getGender());
         user.setRole(Role.ADMIN);
+        user.setSocial(Social.LOCAL);
 
         return user;
     }

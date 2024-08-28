@@ -9,6 +9,7 @@
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <title>회원정보 수정 - ShowMate</title>
     <link rel="stylesheet" th:href="@{/css/editForm.css}" />
+    <link rel="stylesheet" th:href="@{https://cdn-uicons.flaticon.com/2.5.1/uicons-bold-rounded/css/uicons-bold-rounded.css}">
 </head>
 
 <div layout:fragment="content" class="container d-flex flex-column align-items-center min-vh-100">
@@ -16,36 +17,24 @@
         <form action="/user/edit" role="form" method="post" class="edit-form">
             <!-- 사용자 이름 (수정 불가) -->
             <div class="input-container">
-                <input class="readOnly" type="text" id="name" name="name" th:value="${name}">
+                <input class="readOnly" type="text" id="name" name="name" th:value="${user.name}">
                 <label class="readOnly-label" for="name" style="background-color:transparent">사용자 이름</label>
             </div>
 
             <!-- 이메일 (수정 불가) -->
             <div class="input-container">
-                <input class="readOnly" type="email" id="email" name="email" th:value="${email}">
+                <input class="readOnly" type="email" id="email" name="email" th:value="${user.email}">
                 <label class="readOnly-label" for="email" style="background-color:transparent">이메일</label>
-            </div>
-
-            <!-- 기존 비밀번호 -->
-            <div class="input-container input-password">
-                <input type="password" id="current-password" name="current-password" placeholder=" " required>
-                <label for="current-password">기존 비밀번호</label>
-                <span class="password-toggle" onclick="togglePassword('current-password')">
-                    <i class="fi fi-br-eye-crossed"></i>
-                </span>
-                <span class="clear-text" onclick="clearInput('current-password')">
-                    <i class="fi fi-br-cross"></i>
-                </span>
             </div>
 
             <!-- 새 비밀번호 -->
             <div class="input-container input-password">
-                <input type="password" id="new-password" name="new-password" placeholder=" " required>
-                <label for="new-password">새 비밀번호</label>
-                <span class="password-toggle" onclick="togglePassword('new-password')">
+                <input type="password" id="password" name="password" placeholder=" " required>
+                <label for="password">새 비밀번호</label>
+                <span class="password-toggle" onclick="togglePassword('password')">
                     <i class="fi fi-br-eye-crossed"></i>
                 </span>
-                <span class="clear-text" onclick="clearInput('new-password')">
+                <span class="clear-text" onclick="clearInput('password')">
                     <i class="fi fi-br-cross"></i>
                 </span>
             </div>
@@ -53,7 +42,7 @@
             <!-- 새 비밀번호 확인 -->
             <div class="input-container input-password">
                 <input type="password" id="confirm-new-password" name="confirm-new-password" placeholder=" " required>
-                <label for="confirm-new-password">새 비밀번호 확인</label>
+                <label for="confirm-new-password">비밀번호 확인</label>
                 <span class="password-toggle" onclick="togglePassword('confirm-new-password')">
                     <i class="fi fi-br-eye-crossed"></i>
                 </span>
@@ -61,11 +50,11 @@
                     <i class="fi fi-br-cross"></i>
                 </span>
             </div>
-            <div id="password-error" class="error-message">새 비밀번호와 일치하지 않습니다.</div>
+            <div id="password-error" class="error-message">비밀번호와 일치하지 않습니다.</div>
 
             <!-- 휴대폰 번호 -->
             <div class="input-container">
-                <input type="tel" id="tel" name="tel" placeholder=" " pattern="[0-9]{3}[0-9]{4}[0-9]{4}" required>
+                <input type="tel" id="tel" name="tel" placeholder=" " pattern="[0-9]{3}[0-9]{4}[0-9]{4}" th:value="${user.tel}" required>
                 <label for="tel">휴대폰 번호 ( '-' 제외)</label>
                 <span class="clear-text" onclick="clearInput('tel')">
                     <i class="fi fi-br-cross"></i>
@@ -76,9 +65,9 @@
             <div class="gender-container">
                 <label class="d-block">성별</label>
                 <div class="gender-options">
-                    <input type="radio" id="male" name="gender" value="male" required checked>
+                    <input type="radio" id="male" name="gender" value="male" th:checked="${user.gender == 'male'}" required>
                     <label for="male">남자</label>
-                    <input type="radio" id="female" name="gender" value="female" required>
+                    <input type="radio" id="female" name="gender" value="female" th:checked="${user.gender == 'female'}" required>
                     <label for="female">여자</label>
                 </div>
             </div>
@@ -138,9 +127,9 @@
             inputField.focus();
         }
 
-        // 새 비밀번호 확인
+        // 비밀번호 확인
         document.getElementById('confirm-new-password').addEventListener('input', function() {
-            const newPassword = document.getElementById('new-password').value;
+            const newPassword = document.getElementById('password').value;
             const confirmNewPassword = this.value;
             const errorElement = document.getElementById('password-error');
 

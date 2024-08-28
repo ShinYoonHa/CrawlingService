@@ -1,10 +1,13 @@
 package com.crawl.Crawling.dto;
 
+import com.crawl.Crawling.constant.Social;
+import com.crawl.Crawling.entity.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
+import org.modelmapper.ModelMapper;
 
 @Getter
 @Setter
@@ -24,5 +27,11 @@ public class UserDto {
     private String tel;
 
     private String gender;
+    private Social social;
 
+    private static ModelMapper modelMapper = new ModelMapper();
+
+    public static UserDto of(User user) { //Entity와 DTO를 곧바로 연결
+        return modelMapper.map(user, UserDto.class);
+    }
 }
