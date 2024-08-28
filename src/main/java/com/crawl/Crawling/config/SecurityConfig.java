@@ -19,6 +19,8 @@ public class SecurityConfig {
     private UserService userService;
     @Autowired
     private CustomLoginSuccessHandler customLoginSuccessHandler;
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -36,6 +38,12 @@ public class SecurityConfig {
         ).logout(logout -> logout
             .logoutRequestMatcher(new AntPathRequestMatcher("/user/logout"))
             .logoutSuccessUrl("/")
+            .invalidateHttpSession(true) // 세션 무효화
+            .deleteCookies("JSESSIONID") // 세션 쿠키 삭제
+        ).oauth2Login(oauthLogin -> oauthLogin
+            .defaultSuccessUrl("/")
+            .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
+            .userService(customOAuth2UserService))
         ).cors(withDefaults());
 
         return http.build();
