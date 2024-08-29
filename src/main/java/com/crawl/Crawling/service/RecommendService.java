@@ -12,7 +12,9 @@ import com.crawl.Crawling.repository.RecentViewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,26 +30,33 @@ public class RecommendService {
         List<Product> recentViewList = recentViewRepository.findAllByUserOrderByViewDateDesc(user)
                 .stream()
                 .map(RecentView::getProduct)
-                .collect(Collectors.toList());
+                .toList();
         List<Product> likedList = likesRepository.findByUser(user)
                 .stream()
                 .map(Likes::getProduct)
-                .collect(Collectors.toList());
+                .toList();
 
-        // 카테고리 기반 추천
-        List<Category> categoryList = recentViewList.stream()
-                .map(Product::getCategory)
-                .distinct()
-                .collect(Collectors.toList());
+        // 카테고리별 가중치 계산
+        Map<Category, Long> categoryWeights = recentViewList.stream()
+                .collect(Collectors.groupingBy(Product::getCategory, Collectors.counting()));
 
-        // 추천 상품 리스트 초기화
-        List<Product> recommendList = productRepository.findByCategoryIn(categoryList)
-                .stream()
-                .filter(product -> !recentViewList.contains(product)
-                        && !likedList.contains(product))
-                .sorted((p1, p2) -> Double.compare(p2.getRate(), p1.getRate())) // 평점 높은 순 정렬
-                .limit(20) // 추천 상품 수 제한
-                .collect(Collectors.toList());
+        // 가중치에 따라 추천 상품 리스트 생성
+        List<Product> recommendList = new ArrayList<>();
+        for (Map.Entry<Category, Long> entry : categoryWeights.entrySet()) {
+            Category category = entry.getKey();
+            Long weight = entry.getValue();
+
+            // 각 카테고리에서 가중치만큼 상품을 가져옴
+            List<Product> weightedProducts = productRepository.findByCategory(category)
+                    .stream()
+                    .filter(product -> !recentViewList.contains(product)
+                            && !likedList.contains(product))
+                    .sorted((p1, p2) -> Double.compare(p2.getRate(), p1.getRate())) // 평점 높은 순 정렬
+                    .limit(weight) // 가중치에 따라 상품 개수 제한
+                    .toList();
+
+            recommendList.addAll(weightedProducts);
+        }
 
         // 최근 본 상품과 유사한 상품 추가
         for (Product recentProduct : recentViewList) {
@@ -63,12 +72,12 @@ public class RecommendService {
         // 중복 제거한 리스트 생성
         List<Product> distinctRecommendList = recommendList.stream()
                 .distinct()
-                .collect(Collectors.toList());
+                .toList();
 
         // 최종 추천 리스트를 20개로 제한
         List<Product> finalRecommendList = distinctRecommendList.stream()
                 .limit(20)
-                .collect(Collectors.toList());
+                .toList();
 
         // Entity를 DTO로 변환 후 반환
         return finalRecommendList.stream()
