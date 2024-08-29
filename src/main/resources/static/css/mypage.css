@@ -114,30 +114,23 @@ body {
     width: 300px;
     text-align: center;
     border-radius: 8px;
-    position: relative; /* 상대적 위치로 설정하여 닫기 버튼 배치 가능 */
-}
-
-.modal-close {
-    color: red; /* 닫기 버튼을 빨간색으로 */
-    position: absolute;
-    top: -5px;  /* 상단에 배치 */
-    right: 15px; /* 우측에 배치 */
-    font-size: 34px;
-    font-weight: bold;
-    cursor: pointer;
-    height: 10px;
-}
-
-.modal-title {
-    margin-bottom: 20px;
+    position: relative;
 }
 
 .modal-input {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-    box-sizing: border-box;
+    margin: 0 5px;
+}
+/* 버튼 컨테이너 스타일 추가 */
+.modal-buttons {
+    display: flex;
+    justify-content: space-between; /* 버튼을 좌우로 배치 */
+    margin-top: 20px;
+}
+.modal-title {
+    margin-bottom: 20px;
+}
+/* 버튼 스타일 조정 */
+.modal-buttons .btn {
+    flex: 1; /* 버튼을 같은 너비로 조정 */
+    margin: 0 5px; /* 버튼 사이의 간격 설정 */
 }
