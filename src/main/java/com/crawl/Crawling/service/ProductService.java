@@ -1,11 +1,14 @@
 package com.crawl.Crawling.service;
 
+import com.crawl.Crawling.constant.Category;
 import com.crawl.Crawling.dto.ProductDto;
 import com.crawl.Crawling.dto.ProductSearchDto;
+import com.crawl.Crawling.entity.PriceHistory;
 import com.crawl.Crawling.entity.Product;
 import com.crawl.Crawling.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
@@ -13,9 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Service
 //@Transactional
@@ -124,5 +127,40 @@ public class ProductService {
             priceHistoryService.savePriceHistory(findProduct);
         }
         return CompletableFuture.completedFuture(null);
+    }
+
+    // 카테고리별 가격 하락률이 높은 상품을 조회하는 메서드 추가
+    @Cacheable("topPriceDropProducts")
+    public Map<Category, List<Product>> getTopPriceDropProductsByCategory(int limit) {
+        Map<Category, List<Product>> result = new LinkedHashMap<>();
+
+        for (Category category : Category.values()) {
+            List<Product> productsInCategory = productRepository.findByCategory(category);
+
+            List<Product> topPriceDropProducts = productsInCategory.stream()
+                    .filter(product -> !product.getPriceHistories().isEmpty())
+                    .sorted((p1, p2) -> {
+                        double dropRate1 = getPriceDropRate(p1);
+                        double dropRate2 = getPriceDropRate(p2);
+                        return Double.compare(dropRate2, dropRate1); // 내림차순 정렬
+                    })
+                    .limit(limit)
+                    .collect(Collectors.toList());
+
+            result.put(category, topPriceDropProducts);
+        }
+
+        return result;
+    }
+
+    private double getPriceDropRate(Product product) {
+        int currentPrice = product.getPrice();
+        Optional<PriceHistory> highestPriceHistory = product.getPriceHistories().stream()
+                .max(Comparator.comparingInt(PriceHistory::getPrice));
+        if (highestPriceHistory.isPresent()) {
+            int highestPrice = highestPriceHistory.get().getPrice();
+            return ((double) (highestPrice - currentPrice) / highestPrice) * 100;
+        }
+        return 0.0;
     }
 }

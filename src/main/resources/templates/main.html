@@ -1,20 +1,137 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"  layout:decorate="~{layouts/layout}">
 <head>
     <meta charset="UTF-8">
-    <title>Home - MyWebsite</title>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <title>메인화면 - ShowMate</title>
     <link rel="stylesheet" th:href="@{/css/main.css}" />
 </head>
 
 <div layout:fragment="content">
-    <div class="jumbotron text-center">
-        <h1>Welcome to MyWebsite</h1>
-        <p class="lead">This is a simple web page created with Thymeleaf.</p>
-        <hr class="my-4">
-        <p>Learn more about what we do by exploring the website.</p>
-        <a class="btn btn-primary btn-lg" href="/about" role="button">Learn more</a>
+    <!-- 로딩 화면 -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loader">loading...</div>
+    </div>
+    <div class="main-container">
+        <!-- 로그인 상태에 따라 추천 상품 목록 보이기/숨기기 -->
+        <div class="recommend-container" sec:authorize="isAuthenticated()">
+            <h4>추천 상품</h4>
+            <div class="product-slider recommend-slider">
+                <button class="slider-button prev" type="button">&#10094;</button>
+                <div class="product-slider-container">
+                    <div class="product-slider-content">
+                        <!-- JavaScript가 이 부분을 동적으로 업데이트합니다. -->
+                    </div>
+                </div>
+                <button class="slider-button next" type="button">&#10095;</button>
+            </div>
+        </div>
+
+        <!-- 로그인 여부와 관계없이 항상 보이는 가격 하락률 목록 -->
+        <div class="price-drop-container">
+            <div th:each="entry : ${priceDropProductsByCategory}">
+                <h4 th:text="${entry.key.category_value} + ' 가격 하락률 Top 20'"></h4>
+                <div class="product-slider price-drop-slider">
+                    <button class="slider-button prev" type="button">&#10094;</button>
+                    <div class="product-slider-container">
+                        <div class="product-slider-content">
+                            <div th:each="product : ${entry.value}" class="product-slider-item">
+                                <a th:href="@{/product/{id}(id=${product.id})}">
+                                    <img class="slide-item-img" th:src="${product.img}" th:alt="${product.name}" />
+                                    <p class="slide-item-name" th:text="${product.name}"></p>
+                                    <p class="slide-item-price" th:text="${product.price} + '원'"></p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="slider-button next" type="button">&#10095;</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+    $(document).ready(function() {
+        // 추천 상품 슬라이더 데이터를 서버에서 받아온 후 DOM에 추가
+        const recommendList = /*[[${recommendList}]]*/ [];
 
+        // recommendList가 유효한 배열인지 확인
+        if (Array.isArray(recommendList)) {
+            const recommendSliderContainer = $('.recommend-container .product-slider-content');
+            recommendList.forEach(product => {
+                const sliderItem = `
+                    <div class="product-slider-item">
+                        <a href="/product/${product.id}">
+                            <img class="slide-item-img" src="${product.img}" alt="${product.name}" />
+                            <p class="slide-item-name">${product.name}</p>
+                            <p class="slide-item-price">${formatNumber(product.price)}원</p>
+                        </a>
+                    </div>`;
+                recommendSliderContainer.append(sliderItem);
+            });
+        }
+
+        // 모든 슬라이더에 대해 prev, next 버튼 설정
+        function initializeSliders() {
+            $('.product-slider').each(function() {
+                const sliderContainer = $(this).find('.product-slider-content');
+                const prevButton = $(this).find('.prev');
+                const nextButton = $(this).find('.next');
+                const totalSlides = Math.ceil(sliderContainer.children().length / 5); // 슬라이드 개수
+                let currentIndex = 0;
+
+                function updateSlider() {
+                    sliderContainer.css('transform', `translateX(-${currentIndex * 100}%)`);
+                }
+
+                prevButton.click(function() {
+                    currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+                    updateSlider();
+                });
+
+                nextButton.click(function() {
+                    currentIndex = (currentIndex + 1) % totalSlides;
+                    updateSlider();
+                });
+            });
+        }
+
+        // 숫자 포맷팅 함수
+        function formatNumber(number) {
+            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        // 추천 상품 가격 포맷팅 적용
+        $(".recommend-slider .slide-item-price").each(function() {
+            var priceText = $(this).text();
+            var price = parseInt(priceText.replace(/[^0-9]/g, ''), 10);
+            $(this).text(formatNumber(price) + "원");
+        });
+
+        // 가격 하락률 상품 가격 포맷팅 적용
+        $(".price-drop-slider .slide-item-price").each(function() {
+            var priceText = $(this).text();
+            var price = parseInt(priceText.replace(/[^0-9]/g, ''), 10);
+            $(this).text(formatNumber(price) + "원");
+        });
+
+        // 상품명 잘라서 표시하는 함수
+        $(".slide-item-name").each(function() {
+            var text = $(this).text();
+            if (text.length > 25) { // 표시할 최대 길이 설정
+                $(this).text(text.substring(0, 25) + "⋯");
+            }
+        });
+
+        // 슬라이더 초기화
+        initializeSliders();
+        // 로딩 화면 숨기기
+        $('#loading-screen').fadeOut('slow');
+    });
+    </script>
+</th:block>
 </html>
