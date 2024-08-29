@@ -1,3 +1,7 @@
+* {
+    font-family: 'Spoqa Han Sans Neo', 'sans-serif';
+}
+
 .footer {
   width: 100%;
   padding: 15px 0;
@@ -9,6 +13,10 @@
 
 .navbar {
     background-color:#7048cd
+}
+
+.navbar-brand {
+    padding: 0;
 }
 
 .navbar-nav {
