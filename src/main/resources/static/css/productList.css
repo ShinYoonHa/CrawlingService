@@ -2,6 +2,9 @@ a {
     text-decoration: none;
 }
 
+.card {
+    border: none;
+}
 .totalCount,
 .searchResult {
     text-align: center;
