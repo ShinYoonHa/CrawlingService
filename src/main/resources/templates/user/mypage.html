@@ -18,8 +18,8 @@
             <p><strong><span sec:authentication="name"></span></strong></p>
         </div>
         <div class="action-buttons">
-            <button  id="editBtn" class="btn btn-primary btn-block" th:if="!${isSocial}">회원정보 수정</button>
-            <button  id="deleteBtn" class="btn btn-danger btn-block">회원탈퇴</button>
+            <button id="editBtn" class="btn btn-primary btn-block" th:if="!${isSocial}">회원정보 수정</button>
+            <button id="deleteBtn" class="btn btn-danger btn-block">회원탈퇴</button>
             <a href="/like/likeList" class="btn btn-secondary btn-block">찜한 상품</a>
             <a href="/recentView" class="btn btn-info btn-block">최근 본 상품</a>
             <a href="/notice/noticeList" class="btn btn-info btn-block">알림 설정 목록</a>
@@ -29,14 +29,17 @@
     <!-- 비밀번호 확인 모달 -->
     <div id="passwordModal" class="modal" th:if="!${isSocial}">
         <div class="modal-content">
-            <span class="modal-close">&times;</span>
             <h4 class="modal-title">비밀번호 확인</h4>
-            <input type="password" id="password" class="modal-input" placeholder="비밀번호 입력" required>
-            <button id="confirmPasswordBtn" class="btn btn-primary mt-3">확인</button>
+            <input type="password" id="password" class="modal-input" placeholder="비밀번호 입력" required autofocus>
+
+            <!-- 버튼 컨테이너 추가 -->
+            <div class="modal-buttons">
+                <button id="confirmPasswordBtn" class="btn btn-primary">확인</button>
+                <button id="cancelBtn" class="btn btn-danger">취소</button>
+            </div>
         </div>
     </div>
 </div>
-
 
 <th:block layout:fragment="script">
     <script th:inline="javascript">
@@ -92,8 +95,8 @@
                 });
             }
 
-            // 모달 닫기 버튼
-            $('.modal-close').click(function () {
+            // 취소 버튼 클릭 시 모달 닫기
+            $('#cancelBtn').click(function () {
                 closeModal();
             });
             //엔터키 누르면 확인
