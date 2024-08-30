@@ -17,7 +17,7 @@
     <div class="main-container">
         <!-- 로그인 상태에 따라 추천 상품 목록 보이기/숨기기 -->
         <div class="recommend-container" sec:authorize="isAuthenticated()">
-            <h4>추천 상품</h4>
+            <h4>&#128077; 추천 상품</h4>
             <div class="product-slider recommend-slider">
                 <button class="slider-button prev" type="button">&#10094;</button>
                 <div class="product-slider-container">
@@ -32,7 +32,7 @@
         <!-- 로그인 여부와 관계없이 항상 보이는 가격 하락률 목록 -->
         <div class="price-drop-container">
             <div th:each="entry : ${priceDropProductsByCategory}">
-                <h4 th:text="${entry.key.category_value} + ' 가격 하락률 Top 20'"></h4>
+                <h4 th:id="'category-' + ${entry.key}" th:text="${entry.key.category_value} + ' 가격 하락률 Top 20'"></h4>
                 <div class="product-slider price-drop-slider">
                     <button class="slider-button prev" type="button">&#10094;</button>
                     <div class="product-slider-container">
@@ -99,6 +99,18 @@
                 });
             });
         }
+        // 이모지 배열
+        const emojiArray = [
+            '&#128105;', '&#128102;', '&#128132;', '&#127868;', '&#127858;', '&#128298;',
+            '&#128701;', '&#128186;', '&#128187;', '&#127954;', '&#128663;', '&#128214;',
+            '&#128299;', '&#128193;', '&#128054;', '&#128138;'
+        ];
+
+        // h4 요소에 이모지 추가
+        $('.price-drop-container h4').each(function(index) {
+            const emoji = emojiArray[index % emojiArray.length]; // 배열 길이를 넘을 경우를 대비해 모듈로 연산
+            $(this).html(emoji + " " + $(this).text());
+        });
 
         // 숫자 포맷팅 함수
         function formatNumber(number) {
