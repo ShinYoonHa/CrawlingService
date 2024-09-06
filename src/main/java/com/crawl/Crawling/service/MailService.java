@@ -16,8 +16,8 @@ import static com.crawl.Crawling.controller.UserController.SIGNUP;
 public class MailService {
     //Bean 등록해둔 MailConfig를 emailsender 라는 이름으로 autowired
     private final JavaMailSender emailSender;
-    private String signupCode = createKey(3); //
-    private String newPw = createKey(2);
+    private String signupCode;
+    private String newPw;
 
     private MimeMessage createMessage(String to, int num) throws Exception {
         MimeMessage message = emailSender.createMimeMessage();
@@ -61,7 +61,7 @@ public class MailService {
         return message;
     }
 
-    public static String createKey(int num) {
+    public String createKey(int num) {
         StringBuffer key = new StringBuffer();
         Random r = new Random();
 
@@ -82,6 +82,12 @@ public class MailService {
         return key.toString();
     }
     public String sendSimpleMessage(String to, int num) throws Exception {
+        if (num != SIGNUP) {
+            newPw = createKey(2); // 비밀번호 재설정 시마다 새로운 비밀번호 생성
+        } else {
+            signupCode = createKey(3); // 회원가입 코드도 새로 생성되도록
+        }
+
         MimeMessage message = createMessage(to, num);
         try {
             emailSender.send(message);
