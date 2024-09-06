@@ -21,10 +21,6 @@
                 <input type="text" id="tel" name="tel" placeholder=" " required>
                 <label for="tel">전화번호</label>
             </div>
-            <div class="input-container">
-                <input type="password" id="pw" name="pw" placeholder=" " required>
-                <label for="pw">비밀번호</label>
-            </div>
             <button class="btn btn-find w-100" type="submit" onclick="findEmail()">이메일 찾기</button>
             <h5 id="resultMessage" class="result-message"></h5>
             <div class="additional-links">
@@ -45,13 +41,11 @@
 
         const name = $("#name").val();
         const tel = $("#tel").val();
-        const pw = $("#pw").val();
 
         var url = "/user/find-email";
         var paramData = {
             name : name,
             tel : tel,
-            pw : pw,
         };
         var param = JSON.stringify(paramData);
 
