@@ -104,9 +104,8 @@ public class UserController {
     public ResponseEntity<Map<String, String>> findEmail(@RequestBody Map<String, String> req) {
         String name = req.get("name");
         String tel = req.get("tel");
-        String pw = req.get("pw");
 
-        User user = userService.findByNameAndTelAndPw(name, tel, pw);
+        User user = userService.findByNameAndTel(name, tel);
 
         Map<String, String> res = new HashMap<>();
         if (user != null) {

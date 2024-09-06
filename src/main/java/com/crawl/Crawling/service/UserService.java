@@ -36,13 +36,10 @@ public class UserService implements UserDetailsService {
     public void deleteUser(String email) {
         userRepository.delete(findByEmail(email));
     }
-    public User findByNameAndTelAndPw(String name, String tel, String pw) {
+    public User findByNameAndTel(String name, String tel) {
         User user = userRepository.findByNameAndTel(name, tel);
+        return user;
 
-        if (user != null && passwordEncoder.matches(pw, user.getPassword())) {
-            return user;
-        }
-        return null;
     }
     public User findByEmailAndNameAndTel(String email, String name, String tel) {
         User user = userRepository.findByEmailAndNameAndTel(email, name, tel);
