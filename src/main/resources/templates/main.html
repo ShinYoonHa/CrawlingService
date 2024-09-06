@@ -42,6 +42,10 @@
                                     <img class="slide-item-img" th:src="${product.img}" th:alt="${product.name}" />
                                     <p class="slide-item-name" th:text="${product.name}"></p>
                                     <p class="slide-item-price" th:text="${product.price} + '원'"></p>
+                                    <div class="rating-container">
+                                        <div class="rating" th:data-rate="${product.rate}"></div>
+                                        <span class="rating-count" th:text="${product.rate_count} + '개 상품평'"></span>
+                                    </div>
                                 </a>
                             </div>
                         </div>
@@ -69,6 +73,11 @@
                             <img class="slide-item-img" src="${product.img}" alt="${product.name}" />
                             <p class="slide-item-name">${product.name}</p>
                             <p class="slide-item-price">${formatNumber(product.price)}원</p>
+                            <!-- Rating Section -->
+                            <div class="rating-container">
+                                <div class="rating" data-rate="${product.rate}"></div>
+                                <span class="rating-count">${product.rate_count}개 상품평</span>
+                            </div>
                         </a>
                     </div>`;
                 recommendSliderContainer.append(sliderItem);
@@ -136,6 +145,27 @@
             var text = $(this).text();
             if (text.length > 25) { // 표시할 최대 길이 설정
                 $(this).text(text.substring(0, 25) + "⋯");
+            }
+        });
+
+        // 별점 처리
+        $('.rating').each(function() {
+            var ratingElement = $(this);
+            var rate = parseFloat(ratingElement.data('rate'));
+            var fullStars = Math.floor(rate);
+            var halfStar = rate % 1 !== 0;
+
+            // 기존 별점 제거
+            ratingElement.empty();
+
+            for (let i = 0; i < 5; i++) {
+                const starElement = $('<div></div>').addClass('star');
+                if (i < fullStars) {
+                    starElement.addClass('full');
+                } else if (i === fullStars && halfStar) {
+                    starElement.addClass('half');
+                }
+                ratingElement.append(starElement);
             }
         });
 

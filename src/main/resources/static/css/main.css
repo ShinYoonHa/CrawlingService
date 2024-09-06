@@ -61,6 +61,7 @@ a {
 .product-slider-item p {
     margin: 4px 0;
     color: #444;
+    text-align: center;
 }
 
 .slide-item-name {
@@ -101,70 +102,57 @@ a {
     font-size: 22px;
 }
 
+/*별점 처리*/
+.rating-container {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    justify-content: center; /* 가운데 정렬 */
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    margin-right: 4px; /* 별과 개수 사이에 간격 추가 */
+}
+
+.rating .star {
+    width: 14px;
+    height: 14px;
+    background-image: url('/images/empty_star.png');
+    background-size: cover;
+    margin-right: 2px; /* 별 사이에 간격 조정 */
+}
+
+.rating .star.full {
+    background-image: url('/images/full_star.png');
+}
+
+.rating .star.half {
+    background-image: url('/images/half_star.png');
+}
+.rating-count {
+    font-size: 12px;
+    color: black;
+}
+
 /* 개별 h4 요소에 대한 파스텔 배경색 */
-#category-WOMAN_FASHION {
-    background-color: #FFDDC1; /* 연한 오렌지색 */
-}
-
-#category-MAN_FASHION {
-    background-color: #FFD1DC; /* 연한 핑크색 */
-}
-
-#category-BEAUTY {
-    background-color: #C1E1FF; /* 연한 하늘색 */
-}
-
-#category-BABY_KIDS {
-    background-color: #C1FFD7; /* 연한 민트색 */
-}
-
-#category-FOOD {
-    background-color: #E1FFC1; /* 연한 라임색 */
-}
-
-#category-KITCHEN_ITEMS {
-    background-color: #FFCCF9; /* 연한 연보라색 */
-}
-
-#category-HOUSEHOLD_ITEMS {
-    background-color: #F1C1FF; /* 연한 보라색 */
-}
-
-#category-FURNITURE_INTERIOR {
-    background-color: #C1FFFC; /* 연한 청록색 */
-}
-
-#category-APPLIANCE_DIGITAL {
-    background-color: #FFE1C1; /* 연한 살구색 */
-}
-
-#category-SPORTS_LEISURE {
-    background-color: #FFC1E3; /* 연한 연분홍색 */
-}
-
-#category-CAR_ITEMS {
-    background-color: #C1FFC7; /* 연한 연두색 */
-}
-
-#category-BOOK_ALBUM {
-    background-color: #FFD1C1; /* 연한 살몬색 */
-}
-
-#category-TOY_HOBBY {
-    background-color: #E1C1FF; /* 연한 연보라색 */
-}
-
-#category-STATIONARY_OFFICE {
-    background-color: #C1FFD1; /* 연한 민트그린색 */
-}
-
-#category-PET_ITEMS {
-    background-color: #FFF1C1; /* 연한 바나나색 */
-}
-
-#category-HEALTH_NUTRIENTS {
-    background-color: #D1C1FF; /* 연한 라벤더색 */
-}
+#category-WOMAN_FASHION {background-color: #FFDDC1; /* 연한 오렌지색 */}
+#category-MAN_FASHION {background-color: #FFD1DC; /* 연한 핑크색 */}
+#category-BEAUTY {background-color: #C1E1FF; /* 연한 하늘색 */}
+#category-BABY_KIDS {background-color: #C1FFD7; /* 연한 민트색 */}
+#category-FOOD {background-color: #E1FFC1; /* 연한 라임색 */}
+#category-KITCHEN_ITEMS {background-color: #FFCCF9; /* 연한 연보라색 */}
+#category-HOUSEHOLD_ITEMS {background-color: #F1C1FF; /* 연한 보라색 */}
+#category-FURNITURE_INTERIOR {background-color: #C1FFFC; /* 연한 청록색 */}
+#category-APPLIANCE_DIGITAL {background-color: #FFE1C1; /* 연한 살구색 */}
+#category-SPORTS_LEISURE {background-color: #FFC1E3; /* 연한 연분홍색 */}
+#category-CAR_ITEMS {background-color: #C1FFC7; /* 연한 연두색 */}
+#category-BOOK_ALBUM {background-color: #FFD1C1; /* 연한 살몬색 */}
+#category-TOY_HOBBY { background-color: #E1C1FF; /* 연한 연보라색 */}
+#category-STATIONARY_OFFICE {background-color: #C1FFD1; /* 연한 민트그린색 */}
+#category-PET_ITEMS {background-color: #FFF1C1; /* 연한 바나나색 */}
+#category-HEALTH_NUTRIENTS {background-color: #D1C1FF; /* 연한 라벤더색 */}
 
 /* 로딩 화면 스타일 */
 .loading-screen {
