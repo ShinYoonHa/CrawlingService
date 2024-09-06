@@ -20,9 +20,9 @@
         <div class="action-buttons">
             <button id="editBtn" class="btn btn-primary btn-block" th:if="!${isSocial}">회원정보 수정</button>
             <button id="deleteBtn" class="btn btn-danger btn-block">회원탈퇴</button>
-            <a href="/like/likeList" class="btn btn-secondary btn-block">찜한 상품</a>
-            <a href="/recentView" class="btn btn-info btn-block">최근 본 상품</a>
-            <a href="/notice/noticeList" class="btn btn-info btn-block">알림 설정 목록</a>
+            <a href="/like/likeList" class="btn btn-like btn-block">좋아요한 상품</a>
+            <a href="/recentView" class="btn btn-recent btn-block">최근 본 상품</a>
+            <a href="/notice/noticeList" class="btn btn-notification btn-block">알림 설정 목록</a>
         </div>
     </div>
 
@@ -80,11 +80,11 @@
                     });
                 } else {
                     // 일반 사용자는 비밀번호 확인 모달 열기
-                    openModal('/user/delete');
+                    openModal(actionUrl); //삭제 URL
                 }
             });
 
-            // 사용자 삭제 요청 함수
+            // 소셜 로그인 사용자 삭제 요청 함수
             function deleteUser() {
                 return $.ajax({
                     type: 'DELETE',

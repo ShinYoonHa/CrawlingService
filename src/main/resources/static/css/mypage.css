@@ -69,27 +69,46 @@ body {
     transform: translateY(-2px);
 }
 
-.btn-secondary {
-    background-color: #6c757d;
-    border-color: #6c757d;
-}
-
-.btn-secondary:hover {
-    background-color: #5a6268;
-    border-color: #545b62;
-    transform: translateY(-2px);
-}
-
-.btn-info {
-    background-color: #17a2b8;
-    border-color: #17a2b8;
-}
-
-.btn-info:hover {
-    background-color: #138496;
-    border-color: #117a8b;
+/* 좋아요한 상품 - 진한 분홍색 계열 */
+.btn-like {
+    background-color: #d63384; /* 진한 분홍색 */
+    border-color: #d63384;
     color: white;
+}
+
+.btn-like:hover {
+    background-color: #c2185b; /* hover 시 더 진한 분홍색 */
+    border-color: #c2185b;
     transform: translateY(-2px);
+    color: white;
+}
+
+/* 최근 본 상품 - 초록색 계열 */
+.btn-recent {
+    background-color: #28a745; /* 초록색 */
+    border-color: #28a745;
+    color: white;
+}
+
+.btn-recent:hover {
+    background-color: #218838; /* hover 시 더 진한 초록색 */
+    border-color: #218838;
+    transform: translateY(-2px);
+    color: white;
+}
+
+/* 알림 설정 목록 - 파란색 계열 */
+.btn-notification {
+    background-color: #007bff; /* 파란색 */
+    border-color: #007bff;
+    color: white;
+}
+
+.btn-notification:hover {
+    background-color: #0056b3; /* hover 시 더 진한 파란색 */
+    border-color: #0056b3;
+    transform: translateY(-2px);
+    color: white;
 }
 
 /* 모달 기본 스타일 */
