@@ -35,7 +35,7 @@
                     <i class="fi fi-br-cross"></i>
                 </span>
             </div>
-            <p th:if="${loginErrorMsg}" class="error" th:text="${loginErrorMsg}"></p>
+            <p class="error"></p>
             <button class="btn btn-login w-100" type="submit">로그인</button>
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             <input type="hidden" name="redirect" th:value="${param.redirect}" />
@@ -64,35 +64,40 @@
 </div>
 <th:block layout:fragment="script">
     <script>
-        document.getElementById("loginForm").addEventListener("submit", function (e) {
+        $('#loginForm').submit(function (e) {
             e.preventDefault(); // 기본 폼 제출 방지
 
             // 로딩 화면 표시
-            document.getElementById("loading-screen").style.display = "flex";
+            $('#loading-screen').css('display', 'flex');
 
-            // 로그인 요청
-            const formData = new FormData(this);
-            fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    [document.querySelector("meta[name='_csrf_header']").content]: document.querySelector("meta[name='_csrf']").content
-                }
-            })
-            .then(response => {
-                if (response.ok) {
+            const formData = $(this).serialize(); // 폼 데이터를 직렬화하여 전송
+
+            $.ajax({
+                url: $(this).attr('action'),  // 폼의 action 속성 값
+                type: 'POST',
+                data: formData,
+                beforeSend: function (xhr) {
+                    // CSRF 토큰 설정
+                    xhr.setRequestHeader(
+                        $('meta[name="_csrf_header"]').attr('content'),
+                        $('meta[name="_csrf"]').attr('content')
+                    );
+                },
+                success: function (response) {
                     window.location.href = "/"; // 로그인 성공 시 메인 페이지로 이동
-                } else {
+                },
+                error: function (xhr, status, error) {
                     // 로그인 실패 시 로딩 화면 숨기기 및 에러 처리
-                    document.getElementById("loading-screen").style.display = "none";
-                    alert('로그인 실패');
+                    $('#loading-screen').css('display', 'none');
+
+                    if (xhr.status === 401) {  // 401 Unauthorized 상태일 때 에러 메시지 표시
+                        const errorMsg = $('.error');
+                        errorMsg.text(xhr.responseText);  // 서버에서 반환한 에러 메시지
+                        errorMsg.show();  // 에러 메시지 표시
+                    } else {
+                        alert('로그인 실패');
+                    }
                 }
-            })
-            .catch(error => {
-                // 네트워크 오류 처리
-                document.getElementById("loading-screen").style.display = "none";
-                alert('로그인 중 오류가 발생했습니다.');
-                console.error(error);
             });
         });
 

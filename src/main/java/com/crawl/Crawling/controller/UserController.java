@@ -90,9 +90,9 @@ public class UserController {
         return "user/loginForm";
     }
     @GetMapping(value = "/login/error")
-    public String loginError(Model model) {
-        model.addAttribute("loginErrorMsg", "아이디 또는 비밀번호를 확인해주세요.");
-        return "user/loginForm";
+    public ResponseEntity<String> loginError() {
+        String errorMessage = "아이디 또는 비밀번호를 확인해주세요.";
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorMessage); // 401 상태와 함께 메시지 반환
     }
 
     @GetMapping(value = "/find-email")
